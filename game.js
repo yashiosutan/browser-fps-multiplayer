@@ -301,15 +301,27 @@ const RULES = {
 const AVATAR_STYLES = new Set(['trooper', 'cyber', 'ninja']);
 const AVATAR_COLORS = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'];
 
-const PEER_PREFIX = 'fps3d-room-';
-const PEER_CONFIG = {
-  config: {
-    iceServers: [
-      { urls: 'stun:stun.l.google.com:19302' },
-      { urls: 'stun:stun1.l.google.com:19302' }
-    ]
+const MQTT_TOPIC_PREFIX = 'yashio-fps3d-v2/rooms/';
+const MQTT_BROKERS = [
+  {
+    code: '1',
+    name: 'Relay-1 (Port 443)',
+    url: 'wss://public.cloud.shiftr.io',
+    opts: { username: 'public', password: 'public' }
+  },
+  {
+    code: '2',
+    name: 'Relay-2 (EMQX)',
+    url: 'wss://broker.emqx.io:8084/mqtt',
+    opts: {}
+  },
+  {
+    code: '3',
+    name: 'Relay-3 (HiveMQ)',
+    url: 'wss://broker.hivemq.com:8884/mqtt',
+    opts: {}
   }
-};
+];
 
 const EYE_HEIGHT = 1.65;
 const CROUCH_EYE_HEIGHT = 1.05;
@@ -361,13 +373,28 @@ function getRandomSpawn(mapId = currentMapId) {
   return { x: sp.x, y: sp.y, z: sp.z };
 }
 
-function generateRoomCode() {
+function generateRoomCode(brokerCode = '1') {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 6; i++) {
+  let code = String(brokerCode || '1')[0];
+  for (let i = 0; i < 5; i++) {
     code += chars[Math.floor(Math.random() * chars.length)];
   }
   return code;
+}
+
+function getBrokerForRoomCode(code) {
+  const normalized = String(code || '').trim().toUpperCase();
+  const prefix = normalized[0];
+  return MQTT_BROKERS.find((b) => b.code === prefix) || MQTT_BROKERS[0];
+}
+
+function round2(n) {
+  return Math.round((Number(n) || 0) * 100) / 100;
+}
+
+function decodePayload(payload) {
+  if (typeof payload === 'string') return JSON.parse(payload);
+  return JSON.parse(new TextDecoder().decode(payload));
 }
 
 function parseColorNum(hexOrNum) {
@@ -1545,9 +1572,13 @@ let myId = null;
 let currentRoomCode = '';
 let isConnected = false;
 let isHost = false;
-let peer = null;
-let hostConn = null;
-const guestConns = new Map();
+let mqttClient = null;
+let roomTopics = null;
+let guestJoinPending = false;
+let joinTimeoutTimer = null;
+let joinRetryTimer = null;
+let lastSentMoveKey = '';
+let lastHeartbeatSent = 0;
 const hostPlayers = {};
 let hostPickups = [];
 let hostTickTimer = null;
@@ -2179,23 +2210,77 @@ function escapeHtml(str) {
 // ==========================================
 // ネットワーク抽象化（ホスト権限型 WebRTC）
 // ==========================================
+function makeRoomTopics(code) {
+  const base = `${MQTT_TOPIC_PREFIX}${code}`;
+  return {
+    base,
+    state: `${base}/state`,
+    toHost: `${base}/to_host`,
+    toClient: (id) => `${base}/to_client/${id}`
+  };
+}
+
+function clearJoinTimers() {
+  if (joinTimeoutTimer) {
+    clearTimeout(joinTimeoutTimer);
+    joinTimeoutTimer = null;
+  }
+  if (joinRetryTimer) {
+    clearInterval(joinRetryTimer);
+    joinRetryTimer = null;
+  }
+}
+
+function cleanupNetwork(sendLeaveNotice = true) {
+  clearJoinTimers();
+  if (hostTickTimer) {
+    clearInterval(hostTickTimer);
+    hostTickTimer = null;
+  }
+  if (mqttClient) {
+    try {
+      if (sendLeaveNotice && mqttClient.connected && roomTopics) {
+        if (isHost) {
+          mqttClient.publish(roomTopics.state, JSON.stringify({ type: 'hostClosed' }), { qos: 0 });
+        } else if (myId) {
+          mqttClient.publish(
+            roomTopics.toHost,
+            JSON.stringify({ senderId: myId, msg: { type: 'leave' } }),
+            { qos: 0 }
+          );
+        }
+      }
+      mqttClient.removeAllListeners();
+      mqttClient.end(true);
+    } catch (_) {}
+    mqttClient = null;
+  }
+  guestJoinPending = false;
+  roomTopics = null;
+}
+
+window.addEventListener('beforeunload', () => {
+  cleanupNetwork(true);
+});
+
+function hasRemoteGuests() {
+  for (const id in hostPlayers) {
+    if (id !== myId) return true;
+  }
+  return false;
+}
+
 function broadcastFromHost(msg) {
   handleServerMessage(msg);
-  for (const conn of guestConns.values()) {
-    if (conn.open) {
-      conn.send(msg);
-    }
-  }
+  if (!mqttClient || !mqttClient.connected || !roomTopics || !hasRemoteGuests()) return;
+  mqttClient.publish(roomTopics.state, JSON.stringify(msg), { qos: 0 });
 }
 
 function sendToPlayerFromHost(targetId, msg) {
   if (targetId === myId) {
     handleServerMessage(msg);
-  } else {
-    const conn = guestConns.get(targetId);
-    if (conn && conn.open) {
-      conn.send(msg);
-    }
+  } else if (mqttClient && mqttClient.connected && roomTopics) {
+    mqttClient.publish(roomTopics.toClient(targetId), JSON.stringify(msg), { qos: 0 });
   }
 }
 
@@ -2203,8 +2288,8 @@ function sendToHost(msg) {
   if (!isConnected) return;
   if (isHost) {
     handleHostReceive(myId, msg);
-  } else if (hostConn && hostConn.open) {
-    hostConn.send(msg);
+  } else if (mqttClient && mqttClient.connected && roomTopics && myId) {
+    mqttClient.publish(roomTopics.toHost, JSON.stringify({ senderId: myId, msg }), { qos: 0 });
   }
 }
 
@@ -2271,9 +2356,23 @@ function hostAddPlayer(id, joinData = {}) {
     reloading: false,
     healTimer: null,
     respawnTimer: null,
-    medkits: initialMedkits
+    medkits: initialMedkits,
+    lastSeen: Date.now()
   };
 
+  sendPlayerInitToHostTarget(id);
+  if (id !== myId) {
+    broadcastFromHost({
+      type: 'stateUpdate',
+      ruleId: currentRuleId,
+      teamScores,
+      matchOver,
+      players: serializePlayersForNet()
+    });
+  }
+}
+
+function sendPlayerInitToHostTarget(id) {
   sendToPlayerFromHost(id, {
     type: 'init',
     id,
@@ -2284,6 +2383,17 @@ function hostAddPlayer(id, joinData = {}) {
     pickups: hostPickups.map((pk) => pk.active),
     players: serializePlayersForNet()
   });
+}
+
+function removeHostPlayer(id) {
+  const target = hostPlayers[id];
+  if (!target) return;
+  cancelHostHeal(target);
+  if (target.respawnTimer) {
+    clearTimeout(target.respawnTimer);
+  }
+  delete hostPlayers[id];
+  broadcastFromHost({ type: 'playerDisconnected', id });
 }
 
 function serializePlayersForNet() {
@@ -2297,11 +2407,11 @@ function serializePlayersForNet() {
       avatarColor: p.avatarColor,
       team: p.team,
       weaponId: p.weaponId,
-      x: p.x,
-      y: p.y,
-      z: p.z,
-      yaw: p.yaw,
-      pitch: p.pitch,
+      x: round2(p.x),
+      y: round2(p.y),
+      z: round2(p.z),
+      yaw: round2(p.yaw),
+      pitch: round2(p.pitch),
       hp: p.hp,
       kills: p.kills,
       deaths: p.deaths,
@@ -2380,16 +2490,32 @@ function hostTriggerMatchOver(winnerName, winnerTeam) {
 }
 
 function handleHostReceive(senderId, msg) {
+  if (!msg || typeof msg !== 'object') return;
   const p = hostPlayers[senderId];
 
   if (msg.type === 'join') {
     if (!p) {
       hostAddPlayer(senderId, msg);
+    } else {
+      p.lastSeen = Date.now();
+      sendPlayerInitToHostTarget(senderId);
     }
     return;
   }
 
   if (!p) return;
+  p.lastSeen = Date.now();
+
+  if (msg.type === 'leave') {
+    if (senderId !== myId) {
+      removeHostPlayer(senderId);
+    }
+    return;
+  }
+
+  if (msg.type === 'ping') {
+    return;
+  }
 
   if (msg.type === 'switchWeapon') {
     const rule = getCurrentRule();
@@ -2678,6 +2804,12 @@ function hostTick() {
   const now = Date.now();
   const allow = getCurrentRule().allowMedkits;
 
+  for (const id in hostPlayers) {
+    if (id !== myId && now - (hostPlayers[id].lastSeen || now) > 12000) {
+      removeHostPlayer(id);
+    }
+  }
+
   if (allow && !matchOver) {
     for (let i = 0; i < hostPickups.length; i++) {
       const pk = hostPickups[i];
@@ -2758,6 +2890,14 @@ function applyRemotePlayerVisualUpdates(p) {
 
 function handleServerMessage(msg) {
   if (msg.type === 'init') {
+    if (!isHost) {
+      if (!guestJoinPending) return;
+      guestJoinPending = false;
+      clearJoinTimers();
+      isConnected = true;
+      enterReadyUI(currentRoomCode);
+    }
+
     myId = msg.id;
     if (msg.ruleId && RULES[msg.ruleId]) {
       currentRuleId = msg.ruleId;
@@ -2775,10 +2915,15 @@ function handleServerMessage(msg) {
         if (pickupMeshes[i]) pickupMeshes[i].visible = active;
       });
     }
+    for (const k in latestPlayersSnapshot) delete latestPlayersSnapshot[k];
     Object.assign(latestPlayersSnapshot, msg.players || {});
+    playerCountEl.textContent = Object.keys(latestPlayersSnapshot).length;
+    for (const id in latestPlayersSnapshot) {
+      if (id !== myId) applyRemotePlayerVisualUpdates(latestPlayersSnapshot[id]);
+    }
     updateMatchBannerUI();
 
-    const me = msg.players[myId];
+    const me = latestPlayersSnapshot[myId];
     if (me) {
       resetLocalPlayerForSpawn(me.x, me.y, me.z, me.hp, me.medkits, me.team);
     }
@@ -2898,12 +3043,25 @@ function handleServerMessage(msg) {
 
   if (msg.type === 'playerDisconnected') {
     delete latestPlayersSnapshot[msg.id];
+    playerCountEl.textContent = Object.keys(latestPlayersSnapshot).length;
     if (otherPlayers[msg.id]) {
       disposeGroup(otherPlayers[msg.id].group);
       scene.remove(otherPlayers[msg.id].group);
       delete otherPlayers[msg.id];
     }
     updateMatchBannerUI();
+    return;
+  }
+
+  if (msg.type === 'hostClosed') {
+    if (isHost) return;
+    isConnected = false;
+    cleanupNetwork(false);
+    document.exitPointerLock?.();
+    overlay.style.display = 'flex';
+    createRoomBtn.disabled = false;
+    joinRoomBtn.disabled = false;
+    setStatus('ホストとの接続が切れました。ページを再読み込みするか新しく参加してください。', true);
     return;
   }
 
@@ -3074,9 +3232,118 @@ function enterReadyUI(code) {
   setStatus('接続完了！「クリックしてプレイ」で開始できます。');
 }
 
+function connectHostWithFailover(brokerIndex) {
+  if (brokerIndex >= MQTT_BROKERS.length) {
+    cleanupNetwork(false);
+    createRoomBtn.disabled = false;
+    joinRoomBtn.disabled = false;
+    setStatus('中継サーバーに接続できませんでした。時間をおいて再度お試しください。', true);
+    return;
+  }
+
+  const broker = MQTT_BROKERS[brokerIndex];
+  const hostId = 'h_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
+  const code = generateRoomCode(broker.code);
+  const topics = makeRoomTopics(code);
+
+  cleanupNetwork(false);
+  myId = hostId;
+  currentRoomCode = code;
+  roomTopics = topics;
+  isHost = true;
+  isConnected = false;
+  lastSentMoveKey = '';
+  lastHeartbeatSent = 0;
+
+  setStatus(`ルームを作成中 (${broker.name})...`);
+
+  let settled = false;
+  const connectTimeout = setTimeout(() => {
+    if (settled || mqttClient !== client) return;
+    settled = true;
+    cleanupNetwork(false);
+    connectHostWithFailover(brokerIndex + 1);
+  }, 5000);
+
+  const client = mqtt.connect(broker.url, {
+    ...broker.opts,
+    clientId: 'fps_' + hostId,
+    clean: true,
+    protocolVersion: 4,
+    keepalive: 30,
+    reconnectPeriod: 0,
+    connectTimeout: 4500,
+    will: {
+      topic: topics.state,
+      payload: JSON.stringify({ type: 'hostClosed' }),
+      qos: 0,
+      retain: false
+    }
+  });
+  mqttClient = client;
+
+  client.on('connect', () => {
+    if (settled || mqttClient !== client) return;
+    client.subscribe(topics.toHost, { qos: 0 }, (err) => {
+      if (settled || mqttClient !== client) return;
+      if (err) {
+        settled = true;
+        clearTimeout(connectTimeout);
+        cleanupNetwork(false);
+        connectHostWithFailover(brokerIndex + 1);
+        return;
+      }
+      settled = true;
+      clearTimeout(connectTimeout);
+      isConnected = true;
+      hostAddPlayer(myId, {
+        name: nameInput.value.trim() || 'Host',
+        avatarStyle: selectedAvatarStyle,
+        avatarColor: selectedAvatarColor
+      });
+      enterReadyUI(code);
+      hostTickTimer = setInterval(hostTick, 66);
+    });
+  });
+
+  client.on('message', (topic, payload) => {
+    if (mqttClient !== client || !roomTopics || topic !== roomTopics.toHost) return;
+    try {
+      const data = decodePayload(payload);
+      if (data && data.senderId && data.msg) {
+        handleHostReceive(data.senderId, data.msg);
+      }
+    } catch (e) {
+      console.warn('Invalid host packet:', e);
+    }
+  });
+
+  client.on('error', (err) => {
+    console.warn('MQTT host error:', broker.name, err);
+    if (!settled && mqttClient === client) {
+      settled = true;
+      clearTimeout(connectTimeout);
+      cleanupNetwork(false);
+      connectHostWithFailover(brokerIndex + 1);
+    }
+  });
+
+  client.on('close', () => {
+    if (mqttClient === client && isConnected) {
+      isConnected = false;
+      cleanupNetwork(false);
+      document.exitPointerLock?.();
+      overlay.style.display = 'flex';
+      createRoomBtn.disabled = false;
+      joinRoomBtn.disabled = false;
+      setStatus('通信サーバーとの接続が切れました。ページを再読み込みしてルームを作成し直してください。', true);
+    }
+  });
+}
+
 createRoomBtn.addEventListener('click', () => {
   ensureAudio();
-  if (typeof Peer === 'undefined') {
+  if (typeof mqtt === 'undefined') {
     setStatus('通信ライブラリの読み込みに失敗しました。ページを再読み込みしてください。', true);
     return;
   }
@@ -3087,122 +3354,139 @@ createRoomBtn.addEventListener('click', () => {
   matchOver = false;
   ingameRuleSelect.value = currentRuleId;
 
+  for (const k in hostPlayers) delete hostPlayers[k];
+  for (const k in latestPlayersSnapshot) delete latestPlayersSnapshot[k];
   loadMap(selectedMap);
   initHostPickups(selectedMap);
 
-  const code = generateRoomCode();
-  const hostPeerId = PEER_PREFIX + code;
   createRoomBtn.disabled = true;
   joinRoomBtn.disabled = true;
-  setStatus('ルームを作成中...');
-
-  peer = new Peer(hostPeerId, PEER_CONFIG);
-
-  peer.on('open', (id) => {
-    isHost = true;
-    isConnected = true;
-    myId = id;
-    hostAddPlayer(id, {
-      name: nameInput.value.trim() || 'Host',
-      avatarStyle: selectedAvatarStyle,
-      avatarColor: selectedAvatarColor
-    });
-    enterReadyUI(code);
-
-    hostTickTimer = setInterval(hostTick, 50);
-  });
-
-  peer.on('connection', (conn) => {
-    conn.on('open', () => {
-      guestConns.set(conn.peer, conn);
-    });
-    conn.on('data', (data) => {
-      handleHostReceive(conn.peer, data);
-    });
-    const cleanup = () => {
-      guestConns.delete(conn.peer);
-      if (hostPlayers[conn.peer]) {
-        cancelHostHeal(hostPlayers[conn.peer]);
-        if (hostPlayers[conn.peer].respawnTimer) {
-          clearTimeout(hostPlayers[conn.peer].respawnTimer);
-        }
-        delete hostPlayers[conn.peer];
-        broadcastFromHost({ type: 'playerDisconnected', id: conn.peer });
-      }
-    };
-    conn.on('close', cleanup);
-    conn.on('error', cleanup);
-  });
-
-  peer.on('error', (err) => {
-    console.error('Peer error:', err);
-    createRoomBtn.disabled = false;
-    joinRoomBtn.disabled = false;
-    setStatus(`エラーが発生しました (${err.type})。もう一度お試しください。`, true);
-  });
+  connectHostWithFailover(0);
 });
 
 joinRoomBtn.addEventListener('click', () => {
   ensureAudio();
-  if (typeof Peer === 'undefined') {
-    setStatus('通信ライブラリの読み込みに失敗しました。', true);
+  if (typeof mqtt === 'undefined') {
+    setStatus('通信ライブラリの読み込みに失敗しました。ページを再読み込みしてください。', true);
     return;
   }
   const code = roomCodeInput.value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
-  if (!code) {
-    setStatus('ルームコードを入力してください。', true);
+  if (code.length !== 6) {
+    setStatus('6桁のルームコードを入力してください。', true);
     return;
   }
 
+  const broker = getBrokerForRoomCode(code);
+  const topics = makeRoomTopics(code);
+  const guestId = 'g_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
+
+  cleanupNetwork(false);
+  for (const k in latestPlayersSnapshot) delete latestPlayersSnapshot[k];
+  myId = guestId;
+  currentRoomCode = code;
+  roomTopics = topics;
+  isHost = false;
+  isConnected = false;
+  guestJoinPending = true;
+  lastSentMoveKey = '';
+  lastHeartbeatSent = 0;
+
   createRoomBtn.disabled = true;
   joinRoomBtn.disabled = true;
-  setStatus(`ルーム ${code} に接続中...`);
+  setStatus(`ルーム ${code} (${broker.name}) に接続中...`);
 
-  peer = new Peer(PEER_CONFIG);
+  const client = mqtt.connect(broker.url, {
+    ...broker.opts,
+    clientId: 'fps_' + guestId,
+    clean: true,
+    protocolVersion: 4,
+    keepalive: 30,
+    reconnectPeriod: 0,
+    connectTimeout: 8000,
+    will: {
+      topic: topics.toHost,
+      payload: JSON.stringify({ senderId: guestId, msg: { type: 'leave' } }),
+      qos: 0,
+      retain: false
+    }
+  });
+  mqttClient = client;
 
-  peer.on('open', (id) => {
-    myId = id;
-    hostConn = peer.connect(PEER_PREFIX + code, { reliable: true });
+  joinTimeoutTimer = setTimeout(() => {
+    if (guestJoinPending || !isConnected) {
+      cleanupNetwork(false);
+      createRoomBtn.disabled = false;
+      joinRoomBtn.disabled = false;
+      setStatus('ルームが見つかりません。コードを確認してください。', true);
+    }
+  }, 10000);
 
-    const timeout = setTimeout(() => {
-      if (!isConnected) {
-        setStatus('ルームが見つかりません。コードを確認してください。', true);
+  client.on('connect', () => {
+    if (mqttClient !== client) return;
+    client.subscribe([topics.state, topics.toClient(guestId)], { qos: 0 }, (err) => {
+      if (mqttClient !== client) return;
+      if (err) {
+        cleanupNetwork(false);
         createRoomBtn.disabled = false;
         joinRoomBtn.disabled = false;
-        peer.destroy();
+        setStatus('ルームへの参加に失敗しました。もう一度お試しください。', true);
+        return;
       }
-    }, 10000);
 
-    hostConn.on('open', () => {
-      clearTimeout(timeout);
-      isHost = false;
-      isConnected = true;
-      hostConn.send({
-        type: 'join',
-        name: nameInput.value.trim() || `Player_${id.slice(-4)}`,
-        avatarStyle: selectedAvatarStyle,
-        avatarColor: selectedAvatarColor
-      });
-      enterReadyUI(code);
-    });
+      const sendJoinPacket = () => {
+        if (mqttClient !== client || !client.connected || !guestJoinPending || !roomTopics) return;
+        client.publish(
+          roomTopics.toHost,
+          JSON.stringify({
+            senderId: guestId,
+            msg: {
+              type: 'join',
+              name: nameInput.value.trim() || `Player_${guestId.slice(-4)}`,
+              avatarStyle: selectedAvatarStyle,
+              avatarColor: selectedAvatarColor
+            }
+          }),
+          { qos: 0 }
+        );
+      };
 
-    hostConn.on('data', (data) => {
-      handleServerMessage(data);
-    });
-
-    hostConn.on('close', () => {
-      isConnected = false;
-      document.exitPointerLock?.();
-      overlay.style.display = 'flex';
-      setStatus('ホストとの接続が切れました。ページを再読み込みしてください。', true);
+      sendJoinPacket();
+      joinRetryTimer = setInterval(sendJoinPacket, 1500);
     });
   });
 
-  peer.on('error', (err) => {
-    console.error('Peer error:', err);
-    createRoomBtn.disabled = false;
-    joinRoomBtn.disabled = false;
-    setStatus(`接続エラー (${err.type})。ルームコードを確認してください。`, true);
+  client.on('message', (topic, payload) => {
+    if (mqttClient !== client) return;
+    try {
+      const msg = decodePayload(payload);
+      if (msg && msg.type) {
+        handleServerMessage(msg);
+      }
+    } catch (e) {
+      console.warn('Invalid server packet:', e);
+    }
+  });
+
+  client.on('error', (err) => {
+    console.warn('MQTT guest error:', err);
+    if (mqttClient === client && (guestJoinPending || !isConnected)) {
+      cleanupNetwork(false);
+      createRoomBtn.disabled = false;
+      joinRoomBtn.disabled = false;
+      setStatus('接続エラーが発生しました。もう一度お試しください。', true);
+    }
+  });
+
+  client.on('close', () => {
+    if (mqttClient === client && isConnected && !guestJoinPending) {
+      isConnected = false;
+      cleanupNetwork(false);
+      document.exitPointerLock?.();
+      overlay.style.display = 'flex';
+      createRoomBtn.disabled = false;
+      joinRoomBtn.disabled = false;
+      setStatus('通信サーバーとの接続が切れました。ページを再読み込みしてください。', true);
+    }
   });
 });
 
@@ -3328,7 +3612,7 @@ window.addEventListener('wheel', (e) => {
 playBtn.addEventListener('click', () => {
   if (!isConnected) return;
   ensureAudio();
-  document.body.requestPointerLock();
+  Promise.resolve(document.body.requestPointerLock?.()).catch(() => {});
 });
 
 document.addEventListener('pointerlockchange', () => {
@@ -3945,22 +4229,39 @@ function animate(now) {
     // ミニマップ更新
     drawMinimap();
 
-    // サーバーへ自分の状態を送信（約30Hz）
-    if (now - lastNetSend > 33) {
+    // サーバーへ自分の状態を送信（最大15Hz・変化時のみ＋2秒ごとにキープアライブ）
+    if (now - lastNetSend > 66) {
       lastNetSend = now;
-      sendToHost({
-        type: 'playerMove',
-        x: playerState.pos.x,
-        y: playerState.pos.y,
-        z: playerState.pos.z,
-        yaw: playerState.yaw,
-        pitch: playerState.pitch,
-        crouching: playerState.isCrouching,
-        sliding: playerState.isSliding,
-        reloading: playerState.isReloading
-      });
+      const rx = round2(playerState.pos.x);
+      const ry = round2(playerState.pos.y);
+      const rz = round2(playerState.pos.z);
+      const ryaw = round2(playerState.yaw);
+      const rpitch = round2(playerState.pitch);
+      const moveKey = `${rx},${ry},${rz},${ryaw},${rpitch},${playerState.isCrouching ? 1 : 0},${playerState.isSliding ? 1 : 0},${playerState.isReloading ? 1 : 0}`;
+      if (moveKey !== lastSentMoveKey) {
+        lastSentMoveKey = moveKey;
+        lastHeartbeatSent = now;
+        sendToHost({
+          type: 'playerMove',
+          x: rx,
+          y: ry,
+          z: rz,
+          yaw: ryaw,
+          pitch: rpitch,
+          crouching: playerState.isCrouching,
+          sliding: playerState.isSliding,
+          reloading: playerState.isReloading
+        });
+      } else if (!isHost && now - lastHeartbeatSent > 2000) {
+        lastHeartbeatSent = now;
+        sendToHost({ type: 'ping' });
+      }
     }
   } else if (isConnected && !playerState.alive) {
+    if (!isHost && now - lastHeartbeatSent > 2000) {
+      lastHeartbeatSent = now;
+      sendToHost({ type: 'ping' });
+    }
     if (playerState.respawnEndTime > 0) {
       const remainMs = Math.max(0, playerState.respawnEndTime - now);
       deathCountdown.textContent = `${(remainMs / 1000).toFixed(1)}s`;
