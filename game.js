@@ -301,6 +301,71 @@ const RULES = {
 const AVATAR_STYLES = new Set(['trooper', 'cyber', 'ninja']);
 const AVATAR_COLORS = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'];
 
+const BOT_DIFFICULTIES = {
+  easy: {
+    id: 'easy',
+    name: '初級 (EASY)',
+    speedMult: 0.62,
+    turnSpeed: 3.2,
+    reactionMs: 720,
+    fireDelayMult: 2.1,
+    aimErrorRad: 0.135,
+    headshotChance: 0.08,
+    detectRange: 24,
+    strafeChance: 0.25,
+    slideChance: 0.0,
+    crouchChance: 0.0,
+    healHpThreshold: 0
+  },
+  normal: {
+    id: 'normal',
+    name: '中級 (NORMAL)',
+    speedMult: 0.82,
+    turnSpeed: 5.5,
+    reactionMs: 420,
+    fireDelayMult: 1.35,
+    aimErrorRad: 0.072,
+    headshotChance: 0.24,
+    detectRange: 34,
+    strafeChance: 0.65,
+    slideChance: 0.12,
+    crouchChance: 0.15,
+    healHpThreshold: 40
+  },
+  hard: {
+    id: 'hard',
+    name: '上級 (HARD)',
+    speedMult: 0.95,
+    turnSpeed: 8.5,
+    reactionMs: 220,
+    fireDelayMult: 1.08,
+    aimErrorRad: 0.036,
+    headshotChance: 0.48,
+    detectRange: 46,
+    strafeChance: 0.9,
+    slideChance: 0.35,
+    crouchChance: 0.32,
+    healHpThreshold: 50
+  },
+  expert: {
+    id: 'expert',
+    name: '達人 (EXPERT)',
+    speedMult: 1.04,
+    turnSpeed: 13.0,
+    reactionMs: 105,
+    fireDelayMult: 1.0,
+    aimErrorRad: 0.017,
+    headshotChance: 0.74,
+    detectRange: 60,
+    strafeChance: 1.0,
+    slideChance: 0.55,
+    crouchChance: 0.42,
+    healHpThreshold: 55
+  }
+};
+const BOT_NAMES = ['Alpha', 'Bravo', 'Viper', 'Nova', 'Ghost', 'Titan', 'Echo'];
+const BOT_STYLE_LIST = ['trooper', 'cyber', 'ninja'];
+
 const MQTT_TOPIC_PREFIX = 'yashio-fps3d-v2/rooms/';
 const MQTT_BROKERS = [
   {
@@ -686,21 +751,48 @@ const avatarStyleList = document.getElementById('avatar-style-list');
 const avatarColorList = document.getElementById('avatar-color-list');
 const mapSelect = document.getElementById('map-select');
 const ruleSelect = document.getElementById('rule-select');
+const botDifficultySelect = document.getElementById('bot-difficulty-select');
+const botCountSelect = document.getElementById('bot-count-select');
+const startBotBtn = document.getElementById('start-bot-btn');
 const createRoomBtn = document.getElementById('create-room-btn');
 const roomCodeInput = document.getElementById('room-code-input');
 const joinRoomBtn = document.getElementById('join-room-btn');
+const inviteBox = document.getElementById('invite-box');
 const roomCodeDisplay = document.getElementById('room-code-display');
 const copyInviteBtn = document.getElementById('copy-invite-btn');
+const soloBotBanner = document.getElementById('solo-bot-banner');
+const soloBotSummary = document.getElementById('solo-bot-summary');
 const hostMapControls = document.getElementById('host-map-controls');
 const ingameMapSelect = document.getElementById('ingame-map-select');
 const ingameRuleSelect = document.getElementById('ingame-rule-select');
+const ingameBotDifficulty = document.getElementById('ingame-bot-difficulty');
+const ingameBotCount = document.getElementById('ingame-bot-count');
 const applyMapBtn = document.getElementById('apply-map-btn');
 const playBtn = document.getElementById('play-btn');
+const backToLobbyBtn = document.getElementById('back-to-lobby-btn');
 const statusMsg = document.getElementById('status-msg');
 
 const sensSlider = document.getElementById('sens-slider');
 const sensVal = document.getElementById('sens-val');
 const soundToggle = document.getElementById('sound-toggle');
+const touchModeToggle = document.getElementById('touch-mode-toggle');
+
+const touchLookZone = document.getElementById('touch-look-zone');
+const touchMoveZone = document.getElementById('touch-move-zone');
+const touchJoystickBase = document.getElementById('touch-joystick-base');
+const touchJoystickKnob = document.getElementById('touch-joystick-knob');
+const btnTouchFire = document.getElementById('btn-touch-fire');
+const btnTouchAds = document.getElementById('btn-touch-ads');
+const btnTouchJump = document.getElementById('btn-touch-jump');
+const btnTouchReload = document.getElementById('btn-touch-reload');
+const btnTouchCrouch = document.getElementById('btn-touch-crouch');
+const btnTouchSlide = document.getElementById('btn-touch-slide');
+const btnTouchMedkit = document.getElementById('btn-touch-medkit');
+const touchMedkitCount = document.getElementById('touch-medkit-count');
+const btnTouchScoreboard = document.getElementById('btn-touch-scoreboard');
+const btnTouchFullscreen = document.getElementById('btn-touch-fullscreen');
+const btnTouchMenu = document.getElementById('btn-touch-menu');
+const weaponSlotsContainer = document.getElementById('weapon-slots');
 
 const damageFlash = document.getElementById('damage-flash');
 const healFlash = document.getElementById('heal-flash');
@@ -825,6 +917,41 @@ soundToggle.addEventListener('click', () => {
   updateSoundBtn();
   if (soundEnabled) ensureAudio();
 });
+
+const isTouchDevice =
+  'ontouchstart' in window ||
+  navigator.maxTouchPoints > 0 ||
+  Boolean(window.matchMedia?.('(pointer: coarse)')?.matches);
+
+const savedTouchPref = localStorage.getItem('fps_touch_controls');
+let touchControlsEnabled = savedTouchPref === 'true' ? true : savedTouchPref === 'false' ? false : isTouchDevice;
+
+function applyTouchModeUI() {
+  document.body.classList.toggle('touch-mode', touchControlsEnabled);
+  touchModeToggle.textContent = touchControlsEnabled ? 'ON' : 'OFF';
+  touchModeToggle.className = `btn sound-btn ${touchControlsEnabled ? 'btn-success' : 'btn-secondary'}`;
+  playBtn.textContent = touchControlsEnabled ? 'タップしてプレイ' : 'クリックしてプレイ';
+}
+applyTouchModeUI();
+
+if (!document.documentElement.requestFullscreen) {
+  btnTouchFullscreen.style.display = 'none';
+}
+
+touchModeToggle.addEventListener('click', () => {
+  touchControlsEnabled = !touchControlsEnabled;
+  localStorage.setItem('fps_touch_controls', String(touchControlsEnabled));
+  applyTouchModeUI();
+});
+
+if (savedTouchPref === null) {
+  window.addEventListener('touchstart', () => {
+    if (!touchControlsEnabled) {
+      touchControlsEnabled = true;
+      applyTouchModeUI();
+    }
+  }, { once: true, passive: true });
+}
 
 const urlParams = new URLSearchParams(window.location.search);
 const presetRoom = urlParams.get('room');
@@ -1128,7 +1255,7 @@ camera.rotation.order = 'YXZ';
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isTouchDevice ? 1.5 : 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -1141,7 +1268,8 @@ scene.add(hemiLight);
 const dirLight = new THREE.DirectionalLight(0xfff5e4, 1.35);
 dirLight.position.set(18, 34, 14);
 dirLight.castShadow = true;
-dirLight.shadow.mapSize.set(2048, 2048);
+const shadowSize = isTouchDevice ? 1024 : 2048;
+dirLight.shadow.mapSize.set(shadowSize, shadowSize);
 dirLight.shadow.camera.near = 1;
 dirLight.shadow.camera.far = 95;
 dirLight.shadow.bias = -0.0005;
@@ -1572,6 +1700,11 @@ let myId = null;
 let currentRoomCode = '';
 let isConnected = false;
 let isHost = false;
+let isOfflineSolo = false;
+let currentBotDifficulty = 'normal';
+let currentBotCount = 3;
+let lastHostTickAt = Date.now();
+let matchRestartTimer = null;
 let mqttClient = null;
 let roomTopics = null;
 let guestJoinPending = false;
@@ -1686,11 +1819,15 @@ function updateHpUI(hp) {
 
 function updateMedkitUI() {
   const rule = getCurrentRule();
-  medkitCountEl.textContent = rule.allowMedkits ? playerState.medkits : '0';
+  const count = rule.allowMedkits ? playerState.medkits : 0;
+  medkitCountEl.textContent = count;
+  touchMedkitCount.textContent = count;
   if (rule.allowMedkits && playerState.medkits > 0) {
     medkitSlot.classList.add('heal-ready');
+    btnTouchMedkit.classList.remove('empty');
   } else {
     medkitSlot.classList.remove('heal-ready');
+    btnTouchMedkit.classList.add('empty');
   }
 }
 
@@ -1727,6 +1864,13 @@ function updateTeamBadgeUI(team) {
   }
 }
 
+function syncTouchButtonStates() {
+  btnTouchAds.classList.toggle('active', Boolean(playerState.isAiming));
+  btnTouchCrouch.classList.toggle('active', Boolean(playerState.crouchToggle || playerState.isCrouching));
+  btnTouchSlide.classList.toggle('cooldown', playerState.slideCooldown > 0 || playerState.isSliding);
+  btnTouchFire.classList.toggle('firing', Boolean(playerState.isFiring));
+}
+
 function updatePostureUI() {
   if (playerState.isSliding) {
     postureBadge.textContent = 'SLIDE';
@@ -1738,6 +1882,7 @@ function updatePostureUI() {
     postureBadge.textContent = 'STAND';
     postureBadge.className = '';
   }
+  syncTouchButtonStates();
 }
 
 function cancelLocalReload() {
@@ -2265,7 +2410,7 @@ window.addEventListener('beforeunload', () => {
 
 function hasRemoteGuests() {
   for (const id in hostPlayers) {
-    if (id !== myId) return true;
+    if (id !== myId && !hostPlayers[id].isBot) return true;
   }
   return false;
 }
@@ -2277,6 +2422,7 @@ function broadcastFromHost(msg) {
 }
 
 function sendToPlayerFromHost(targetId, msg) {
+  if (hostPlayers[targetId]?.isBot) return;
   if (targetId === myId) {
     handleServerMessage(msg);
   } else if (mqttClient && mqttClient.connected && roomTopics) {
@@ -2323,6 +2469,40 @@ function assignTeamBalanced() {
   return redCount <= blueCount ? 'red' : 'blue';
 }
 
+function createBotAIState(weaponId) {
+  const w = WEAPONS[weaponId] || WEAPONS.ar;
+  return {
+    ammo: w.mag,
+    reloadUntil: 0,
+    lastShotAt: 0,
+    targetId: null,
+    seenSince: 0,
+    alertedById: null,
+    alertedUntil: 0,
+    strafeDir: Math.random() < 0.5 ? -1 : 1,
+    strafeSwitchAt: 0,
+    waypoint: null,
+    waypointUntil: 0,
+    stuckTicks: 0,
+    slideCooldownUntil: 0,
+    slidingUntil: 0,
+    slideDirX: 0,
+    slideDirZ: 0,
+    crouchUntil: 0,
+    velY: 0,
+    onGround: true
+  };
+}
+
+function updateBotConfigUI() {
+  botDifficultySelect.value = currentBotDifficulty;
+  ingameBotDifficulty.value = currentBotDifficulty;
+  botCountSelect.value = String(currentBotCount);
+  ingameBotCount.value = String(currentBotCount);
+  const diffName = (BOT_DIFFICULTIES[currentBotDifficulty] || BOT_DIFFICULTIES.normal).name;
+  soloBotSummary.textContent = `難易度: ${diffName} / ボット ${currentBotCount}体`;
+}
+
 function hostAddPlayer(id, joinData = {}) {
   const spawn = getRandomSpawn(currentMapId);
   const cleanName = String(joinData.name || '').trim().slice(0, 16) || `Player_${id.slice(-4)}`;
@@ -2333,14 +2513,18 @@ function hostAddPlayer(id, joinData = {}) {
   const rule = getCurrentRule();
   const team = rule.teamMode ? assignTeamBalanced() : null;
   const initialMedkits = rule.allowMedkits ? INITIAL_MEDKITS : 0;
+  const isBot = Boolean(joinData.isBot);
+  const weaponId = rule.lockedWeapon || (WEAPONS[joinData.weaponId] ? joinData.weaponId : 'ar');
 
   hostPlayers[id] = {
     id,
+    isBot,
+    ai: isBot ? (joinData.ai || createBotAIState(weaponId)) : null,
     name: cleanName,
     avatarStyle: style,
     avatarColor: color,
     team,
-    weaponId: rule.lockedWeapon || 'ar',
+    weaponId,
     x: spawn.x,
     y: spawn.y,
     z: spawn.z,
@@ -2360,14 +2544,46 @@ function hostAddPlayer(id, joinData = {}) {
     lastSeen: Date.now()
   };
 
-  sendPlayerInitToHostTarget(id);
-  if (id !== myId) {
-    broadcastFromHost({
-      type: 'stateUpdate',
-      ruleId: currentRuleId,
-      teamScores,
-      matchOver,
-      players: serializePlayersForNet()
+  if (!isBot) {
+    sendPlayerInitToHostTarget(id);
+    if (id !== myId) {
+      broadcastFromHost({
+        type: 'stateUpdate',
+        ruleId: currentRuleId,
+        teamScores,
+        matchOver,
+        players: serializePlayersForNet()
+      });
+    }
+  }
+}
+
+function hostSyncBots(count = currentBotCount, difficulty = currentBotDifficulty) {
+  const parsedCount = Number.parseInt(count, 10);
+  currentBotCount = Number.isFinite(parsedCount) ? Math.max(0, Math.min(7, parsedCount)) : 0;
+  currentBotDifficulty = BOT_DIFFICULTIES[difficulty] ? difficulty : 'normal';
+  updateBotConfigUI();
+
+  for (const id in hostPlayers) {
+    if (!hostPlayers[id].isBot) continue;
+    cancelHostHeal(hostPlayers[id]);
+    if (hostPlayers[id].respawnTimer) {
+      clearTimeout(hostPlayers[id].respawnTimer);
+    }
+    delete hostPlayers[id];
+  }
+
+  const rule = getCurrentRule();
+  for (let i = 0; i < currentBotCount; i++) {
+    const botId = `bot_${i + 1}`;
+    const botWeapon = rule.lockedWeapon || WEAPON_ORDER[i % WEAPON_ORDER.length];
+    hostAddPlayer(botId, {
+      isBot: true,
+      name: `[BOT] ${BOT_NAMES[i % BOT_NAMES.length]}`,
+      avatarStyle: BOT_STYLE_LIST[i % BOT_STYLE_LIST.length],
+      avatarColor: AVATAR_COLORS[(i + 1) % AVATAR_COLORS.length],
+      weaponId: botWeapon,
+      ai: createBotAIState(botWeapon)
     });
   }
 }
@@ -2426,7 +2642,16 @@ function serializePlayersForNet() {
   return out;
 }
 
-function hostResetMatch(newMapId = currentMapId, newRuleId = currentRuleId) {
+function hostResetMatch(
+  newMapId = currentMapId,
+  newRuleId = currentRuleId,
+  newBotCount = currentBotCount,
+  newBotDifficulty = currentBotDifficulty
+) {
+  if (matchRestartTimer) {
+    clearTimeout(matchRestartTimer);
+    matchRestartTimer = null;
+  }
   if (MAPS[newMapId]) currentMapId = newMapId;
   if (RULES[newRuleId]) currentRuleId = newRuleId;
 
@@ -2438,6 +2663,7 @@ function hostResetMatch(newMapId = currentMapId, newRuleId = currentRuleId) {
   let idx = 0;
   for (const id in hostPlayers) {
     const p = hostPlayers[id];
+    if (p.isBot) continue;
     cancelHostHeal(p);
     if (p.respawnTimer) {
       clearTimeout(p.respawnTimer);
@@ -2459,6 +2685,8 @@ function hostResetMatch(newMapId = currentMapId, newRuleId = currentRuleId) {
     p.team = rule.teamMode ? (idx % 2 === 0 ? 'red' : 'blue') : null;
     idx++;
   }
+
+  hostSyncBots(newBotCount, newBotDifficulty);
 
   broadcastFromHost({
     type: 'matchReset',
@@ -2483,7 +2711,9 @@ function hostTriggerMatchOver(winnerName, winnerTeam) {
     restartIn: MATCH_RESTART_SECONDS
   });
 
-  setTimeout(() => {
+  if (matchRestartTimer) clearTimeout(matchRestartTimer);
+  matchRestartTimer = setTimeout(() => {
+    matchRestartTimer = null;
     if (!isHost || !isConnected) return;
     hostResetMatch(currentMapId, currentRuleId);
   }, MATCH_RESTART_SECONDS * 1000);
@@ -2705,6 +2935,10 @@ function handleHostReceive(senderId, msg) {
 
       target.hp -= hitInfo.totalDamage;
       const isKill = target.hp <= 0;
+      if (target.isBot && target.ai && !isKill) {
+        target.ai.alertedById = p.id;
+        target.ai.alertedUntil = Date.now() + 4000;
+      }
 
       sendToPlayerFromHost(senderId, {
         type: 'hitConfirm',
@@ -2784,6 +3018,9 @@ function handleHostReceive(senderId, msg) {
             respTarget.healing = false;
             respTarget.reloading = false;
             respTarget.medkits = rule.allowMedkits ? INITIAL_MEDKITS : 0;
+            if (respTarget.isBot) {
+              respTarget.ai = createBotAIState(respTarget.weaponId);
+            }
             sendToPlayerFromHost(deadId, {
               type: 'respawn',
               x: respTarget.x,
@@ -2800,15 +3037,359 @@ function handleHostReceive(senderId, msg) {
   }
 }
 
+function hasLineOfSight(from, to, map) {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const dz = to.z - from.z;
+  const dist = Math.hypot(dx, dy, dz);
+  if (dist < 1e-4) return true;
+  const dir = { x: dx / dist, y: dy / dist, z: dz / dist };
+  for (const obs of map.obstacles) {
+    const hit = intersectRayAABB(from, dir, obs);
+    if (hit !== null && hit < dist - 0.15) return false;
+  }
+  return true;
+}
+
+function normalizeAngleDiff(a) {
+  while (a > Math.PI) a -= Math.PI * 2;
+  while (a < -Math.PI) a += Math.PI * 2;
+  return a;
+}
+
+function moveBotWithCollisions(p, dx, dz, botHeight, map) {
+  const limit = map.size / 2 - 0.5;
+  const totalDist = Math.hypot(dx, dz);
+  if (totalDist < 1e-5) return false;
+
+  const steps = totalDist > 0.4 ? Math.ceil(totalDist / 0.4) : 1;
+  const stepX = dx / steps;
+  const stepZ = dz / steps;
+  const startX = p.x;
+  const startZ = p.z;
+
+  for (let s = 0; s < steps; s++) {
+    const nx = Math.max(-limit, Math.min(limit, p.x + stepX));
+    if (!checkHorizontalCollision(nx, p.y, p.z, botHeight)) {
+      p.x = nx;
+    } else if (p.ai.onGround && !checkHorizontalCollision(nx, p.y + 1.15, p.z, botHeight)) {
+      p.ai.velY = JUMP_VELOCITY;
+      p.ai.onGround = false;
+    }
+
+    const nz = Math.max(-limit, Math.min(limit, p.z + stepZ));
+    if (!checkHorizontalCollision(p.x, p.y, nz, botHeight)) {
+      p.z = nz;
+    } else if (p.ai.onGround && !checkHorizontalCollision(p.x, p.y + 1.15, nz, botHeight)) {
+      p.ai.velY = JUMP_VELOCITY;
+      p.ai.onGround = false;
+    }
+  }
+
+  const moved = Math.hypot(p.x - startX, p.z - startZ);
+  return moved < totalDist * 0.35;
+}
+
+function updateBots(dt, now) {
+  if (matchOver) return;
+  const diff = BOT_DIFFICULTIES[currentBotDifficulty] || BOT_DIFFICULTIES.normal;
+  const rule = getCurrentRule();
+  const map = getCurrentMap();
+
+  for (const id in hostPlayers) {
+    const p = hostPlayers[id];
+    if (!p.isBot || !p.alive || !p.ai) continue;
+    const ai = p.ai;
+    const weapon = WEAPONS[p.weaponId] || WEAPONS.ar;
+
+    if (p.reloading && now >= ai.reloadUntil) {
+      p.reloading = false;
+      ai.ammo = weapon.mag;
+    }
+
+    if (p.healing) {
+      p.sliding = false;
+      p.crouching = false;
+      ai.velY -= GRAVITY * dt;
+      p.y += ai.velY * dt;
+      const gy = getGroundHeight(p.x, p.y, p.z);
+      if (p.y <= gy) {
+        p.y = gy;
+        ai.velY = 0;
+        ai.onGround = true;
+      }
+      continue;
+    }
+
+    const eyeHeight = p.sliding ? SLIDE_EYE_HEIGHT : p.crouching ? CROUCH_EYE_HEIGHT : EYE_HEIGHT;
+    const botEye = { x: p.x, y: p.y + eyeHeight, z: p.z };
+
+    let visibleEnemy = null;
+    let visDist = Infinity;
+    let nearestEnemy = null;
+    let nearDist = Infinity;
+    let alertedEnemy = null;
+
+    for (const tid in hostPlayers) {
+      if (tid === id) continue;
+      const target = hostPlayers[tid];
+      if (!target.alive) continue;
+      if (rule.teamMode && target.team && target.team === p.team) continue;
+
+      const d = Math.hypot(target.x - p.x, target.y - p.y, target.z - p.z);
+      if (d < nearDist) {
+        nearDist = d;
+        nearestEnemy = target;
+      }
+      if (tid === ai.alertedById && now < ai.alertedUntil) {
+        alertedEnemy = target;
+      }
+
+      const tChest = {
+        x: target.x,
+        y: target.y + (target.sliding ? 0.65 : target.crouching ? 0.9 : 1.35),
+        z: target.z
+      };
+      if (d <= diff.detectRange && d < visDist && hasLineOfSight(botEye, tChest, map)) {
+        visDist = d;
+        visibleEnemy = target;
+      }
+    }
+
+    if (visibleEnemy) {
+      if (ai.targetId !== visibleEnemy.id) {
+        ai.targetId = visibleEnemy.id;
+        ai.seenSince = now;
+      } else if (!ai.seenSince) {
+        ai.seenSince = now;
+      }
+    } else {
+      ai.targetId = null;
+      ai.seenSince = 0;
+    }
+
+    if (rule.allowMedkits && p.medkits > 0 && p.hp <= diff.healHpThreshold && !visibleEnemy && ai.onGround) {
+      handleHostReceive(p.id, { type: 'startHealItem' });
+      continue;
+    }
+
+    let moveX = 0;
+    let moveZ = 0;
+    let navDest = null;
+
+    if (now < ai.slidingUntil) {
+      p.sliding = true;
+      p.crouching = false;
+      const t = Math.max(0, Math.min(1, 1 - (ai.slidingUntil - now) / (SLIDE_DURATION * 1000)));
+      const slideSpd = THREE.MathUtils.lerp(SLIDE_INITIAL_SPEED, SLIDE_END_SPEED, t);
+      moveX = ai.slideDirX * slideSpd;
+      moveZ = ai.slideDirZ * slideSpd;
+    } else {
+      p.sliding = false;
+      const baseSpeed = MOVE_SPEED * diff.speedMult * weapon.moveMult;
+
+      if (visibleEnemy) {
+        if (now >= ai.strafeSwitchAt) {
+          ai.strafeDir = Math.random() < 0.5 ? -1 : 1;
+          ai.strafeSwitchAt = now + 700 + Math.random() * 1100;
+        }
+        if (diff.crouchChance > 0 && now >= ai.crouchUntil && Math.random() < diff.crouchChance * 0.08) {
+          ai.crouchUntil = now + 550 + Math.random() * 650;
+        }
+        p.crouching = diff.crouchChance > 0 && now < ai.crouchUntil;
+
+        const prefRange =
+          weapon.id === 'shotgun' ? 6 : weapon.id === 'smg' ? 10 : weapon.id === 'sniper' ? 24 : 15;
+        const dx = visibleEnemy.x - p.x;
+        const dz = visibleEnemy.z - p.z;
+        const hDist = Math.hypot(dx, dz) || 1;
+        const toX = dx / hDist;
+        const toZ = dz / hDist;
+        const perpX = -toZ;
+        const perpZ = toX;
+
+        const radialPush = visDist > prefRange + 3 ? 0.85 : visDist < prefRange - 3 ? -0.55 : 0;
+        const strafePush = ai.strafeDir * diff.strafeChance;
+        let combX = toX * radialPush + perpX * strafePush;
+        let combZ = toZ * radialPush + perpZ * strafePush;
+        const combLen = Math.hypot(combX, combZ);
+        if (combLen > 1e-4) {
+          combX /= combLen;
+          combZ /= combLen;
+          const crouchMult = p.crouching ? CROUCH_MOVE_MULT : 1.0;
+          moveX = combX * baseSpeed * crouchMult;
+          moveZ = combZ * baseSpeed * crouchMult;
+
+          if (
+            diff.slideChance > 0 &&
+            !p.crouching &&
+            ai.onGround &&
+            now >= ai.slideCooldownUntil &&
+            Math.random() < diff.slideChance * 0.1
+          ) {
+            ai.slidingUntil = now + SLIDE_DURATION * 1000;
+            ai.slideCooldownUntil = now + SLIDE_COOLDOWN * 1000;
+            ai.slideDirX = combX;
+            ai.slideDirZ = combZ;
+            p.sliding = true;
+          }
+        }
+      } else {
+        p.crouching = false;
+
+        if (rule.allowMedkits && p.hp < 70 && p.medkits < MAX_MEDKITS) {
+          let bestPkDist = 18;
+          for (let i = 0; i < hostPickups.length; i++) {
+            const pk = hostPickups[i];
+            if (!pk.active) continue;
+            const d = Math.hypot(pk.x - p.x, pk.z - p.z);
+            if (d < bestPkDist) {
+              bestPkDist = d;
+              navDest = { x: pk.x, z: pk.z };
+            }
+          }
+        }
+
+        if (!navDest && alertedEnemy) {
+          navDest = { x: alertedEnemy.x, z: alertedEnemy.z };
+        }
+
+        if (!navDest) {
+          const wpDist = ai.waypoint ? Math.hypot(ai.waypoint.x - p.x, ai.waypoint.z - p.z) : 0;
+          if (!ai.waypoint || now >= ai.waypointUntil || wpDist < 1.6) {
+            if (nearestEnemy && Math.random() < 0.55) {
+              ai.waypoint = { x: nearestEnemy.x, z: nearestEnemy.z };
+            } else {
+              const sp = map.spawns[Math.floor(Math.random() * map.spawns.length)];
+              ai.waypoint = { x: sp.x, z: sp.z };
+            }
+            ai.waypointUntil = now + 2600 + Math.random() * 2200;
+          }
+          navDest = ai.waypoint;
+        }
+
+        if (navDest) {
+          const dx = navDest.x - p.x;
+          const dz = navDest.z - p.z;
+          const d = Math.hypot(dx, dz);
+          if (d > 0.3) {
+            moveX = (dx / d) * baseSpeed * 0.9;
+            moveZ = (dz / d) * baseSpeed * 0.9;
+          }
+        }
+      }
+    }
+
+    const botHeight = p.sliding ? SLIDE_PLAYER_HEIGHT : p.crouching ? CROUCH_PLAYER_HEIGHT : PLAYER_HEIGHT;
+    const blocked = moveBotWithCollisions(p, moveX * dt, moveZ * dt, botHeight, map);
+    if (blocked) {
+      if (visibleEnemy) {
+        ai.strafeDir = -ai.strafeDir;
+      } else {
+        ai.stuckTicks += 1;
+        if (ai.stuckTicks >= 4) {
+          ai.waypoint = null;
+          ai.stuckTicks = 0;
+          ai.strafeDir = -ai.strafeDir;
+        }
+      }
+    } else {
+      ai.stuckTicks = 0;
+    }
+
+    ai.velY -= GRAVITY * dt;
+    p.y += ai.velY * dt;
+    const gy = getGroundHeight(p.x, p.y, p.z);
+    if (p.y <= gy) {
+      p.y = gy;
+      ai.velY = 0;
+      ai.onGround = true;
+    }
+
+    const aimTarget = visibleEnemy || alertedEnemy || navDest;
+    let yawErr = Math.PI;
+    if (aimTarget) {
+      const desiredYaw = Math.atan2(-(aimTarget.x - p.x), -(aimTarget.z - p.z));
+      yawErr = normalizeAngleDiff(desiredYaw - p.yaw);
+      const maxTurn = diff.turnSpeed * dt;
+      p.yaw += Math.max(-maxTurn, Math.min(maxTurn, yawErr));
+      if (visibleEnemy) {
+        const aimDy = visibleEnemy.y + 1.3 - botEye.y;
+        p.pitch = Math.max(-0.8, Math.min(0.8, Math.atan2(aimDy, Math.hypot(visibleEnemy.x - p.x, visibleEnemy.z - p.z) || 1)));
+      } else {
+        p.pitch = 0;
+      }
+    }
+
+    if (visibleEnemy) {
+      if (ai.ammo <= 0) {
+        if (!p.reloading) {
+          p.reloading = true;
+          ai.reloadUntil = now + weapon.reloadMs;
+        }
+      } else if (
+        !p.reloading &&
+        !p.healing &&
+        now - ai.seenSince >= diff.reactionMs &&
+        Math.abs(yawErr) < 0.38 &&
+        now - ai.lastShotAt >= weapon.fireRateMs * diff.fireDelayMult
+      ) {
+        const hsProb =
+          rule.id === 'headshot'
+            ? Math.max(
+                diff.headshotChance,
+                diff.id === 'easy' ? 0.55 : diff.id === 'normal' ? 0.75 : diff.id === 'hard' ? 0.92 : 1.0
+              )
+            : diff.headshotChance;
+        const aimHead = Math.random() < hsProb;
+        const targetOffsetY = aimHead
+          ? visibleEnemy.sliding ? 0.96 : visibleEnemy.crouching ? 1.18 : 1.7
+          : visibleEnemy.sliding ? 0.4 : visibleEnemy.crouching ? 0.55 : 1.05;
+
+        const baseDx = visibleEnemy.x - botEye.x;
+        const baseDy = visibleEnemy.y + targetOffsetY - botEye.y;
+        const baseDz = visibleEnemy.z - botEye.z;
+        const baseLen = Math.hypot(baseDx, baseDy, baseDz) || 1;
+        const nx = baseDx / baseLen;
+        const ny = baseDy / baseLen;
+        const nz = baseDz / baseLen;
+
+        const spread = diff.aimErrorRad + weapon.hipSpread * 0.45;
+        const rays = [];
+        for (let k = 0; k < weapon.pellets; k++) {
+          const rx = nx + (Math.random() - Math.random()) * spread;
+          const ry = ny + (Math.random() - Math.random()) * spread * 0.75;
+          const rz = nz + (Math.random() - Math.random()) * spread;
+          const rLen = Math.hypot(rx, ry, rz) || 1;
+          rays.push({ x: rx / rLen, y: ry / rLen, z: rz / rLen });
+        }
+
+        ai.ammo -= 1;
+        ai.lastShotAt = now;
+        handleHostReceive(p.id, {
+          type: 'shoot',
+          origin: botEye,
+          weaponId: p.weaponId,
+          rays
+        });
+      }
+    }
+  }
+}
+
 function hostTick() {
   const now = Date.now();
+  const dt = Math.min(0.12, Math.max(0.005, (now - lastHostTickAt) / 1000));
+  lastHostTickAt = now;
   const allow = getCurrentRule().allowMedkits;
 
   for (const id in hostPlayers) {
-    if (id !== myId && now - (hostPlayers[id].lastSeen || now) > 12000) {
+    if (id !== myId && !hostPlayers[id].isBot && now - (hostPlayers[id].lastSeen || now) > 12000) {
       removeHostPlayer(id);
     }
   }
+
+  updateBots(dt, now);
 
   if (allow && !matchOver) {
     for (let i = 0; i < hostPickups.length; i++) {
@@ -2949,6 +3530,15 @@ function handleServerMessage(msg) {
     }
     for (const k in latestPlayersSnapshot) delete latestPlayersSnapshot[k];
     Object.assign(latestPlayersSnapshot, msg.players || {});
+    const activeResetIds = new Set(Object.keys(latestPlayersSnapshot));
+    playerCountEl.textContent = activeResetIds.size;
+    for (const id in otherPlayers) {
+      if (!activeResetIds.has(id)) {
+        disposeGroup(otherPlayers[id].group);
+        scene.remove(otherPlayers[id].group);
+        delete otherPlayers[id];
+      }
+    }
     for (const id in msg.players) {
       if (id !== myId) applyRemotePlayerVisualUpdates(msg.players[id]);
     }
@@ -3057,8 +3647,8 @@ function handleServerMessage(msg) {
     if (isHost) return;
     isConnected = false;
     cleanupNetwork(false);
-    document.exitPointerLock?.();
-    overlay.style.display = 'flex';
+    exitPlayMode(true);
+    startBotBtn.disabled = false;
     createRoomBtn.disabled = false;
     joinRoomBtn.disabled = false;
     setStatus('ホストとの接続が切れました。ページを再読み込みするか新しく参加してください。', true);
@@ -3220,21 +3810,77 @@ function handleServerMessage(msg) {
 }
 
 // ==========================================
-// ルーム作成・参加フロー（PeerJS）
+// ルーム作成・参加・ボット戦フロー
 // ==========================================
+function clearAllMatchEntities() {
+  if (matchRestartTimer) {
+    clearTimeout(matchRestartTimer);
+    matchRestartTimer = null;
+  }
+  for (const id in hostPlayers) {
+    cancelHostHeal(hostPlayers[id]);
+    if (hostPlayers[id].respawnTimer) {
+      clearTimeout(hostPlayers[id].respawnTimer);
+    }
+    delete hostPlayers[id];
+  }
+  for (const k in latestPlayersSnapshot) {
+    delete latestPlayersSnapshot[k];
+  }
+  for (const id in otherPlayers) {
+    disposeGroup(otherPlayers[id].group);
+    scene.remove(otherPlayers[id].group);
+    delete otherPlayers[id];
+  }
+}
+
+function returnToLobby() {
+  exitPlayMode(true);
+  cleanupNetwork(true);
+  clearAllMatchEntities();
+  isConnected = false;
+  isHost = false;
+  isOfflineSolo = false;
+  matchOver = false;
+  currentRoomCode = '';
+  deathScreen.style.display = 'none';
+  victoryScreen.style.display = 'none';
+  scoreboard.style.display = 'none';
+  healChannelBox.style.display = 'none';
+  lobbySection.style.display = 'block';
+  readySection.style.display = 'none';
+  startBotBtn.disabled = false;
+  createRoomBtn.disabled = false;
+  joinRoomBtn.disabled = false;
+  setStatus('');
+}
+
+backToLobbyBtn.addEventListener('click', () => {
+  returnToLobby();
+});
+
 function enterReadyUI(code) {
   currentRoomCode = code;
   roomCodeDisplay.textContent = code;
   roomHudCode.textContent = code;
   lobbySection.style.display = 'none';
   readySection.style.display = 'block';
+  inviteBox.style.display = isOfflineSolo ? 'none' : 'block';
+  soloBotBanner.style.display = isOfflineSolo ? 'block' : 'none';
   hostMapControls.style.display = isHost ? 'block' : 'none';
-  setStatus('接続完了！「クリックしてプレイ」で開始できます。');
+  updateBotConfigUI();
+  const startLabel = touchControlsEnabled ? 'タップしてプレイ' : 'クリックしてプレイ';
+  setStatus(
+    isOfflineSolo
+      ? `準備完了！「${startLabel}」で再開できます。`
+      : `接続完了！「${startLabel}」で開始できます。`
+  );
 }
 
 function connectHostWithFailover(brokerIndex) {
   if (brokerIndex >= MQTT_BROKERS.length) {
     cleanupNetwork(false);
+    startBotBtn.disabled = false;
     createRoomBtn.disabled = false;
     joinRoomBtn.disabled = false;
     setStatus('中継サーバーに接続できませんでした。時間をおいて再度お試しください。', true);
@@ -3301,8 +3947,11 @@ function connectHostWithFailover(brokerIndex) {
         avatarStyle: selectedAvatarStyle,
         avatarColor: selectedAvatarColor
       });
+      hostSyncBots(currentBotCount, currentBotDifficulty);
       enterReadyUI(code);
+      lastHostTickAt = Date.now();
       hostTickTimer = setInterval(hostTick, 66);
+      hostTick();
     });
   });
 
@@ -3332,14 +3981,52 @@ function connectHostWithFailover(brokerIndex) {
     if (mqttClient === client && isConnected) {
       isConnected = false;
       cleanupNetwork(false);
-      document.exitPointerLock?.();
-      overlay.style.display = 'flex';
+      exitPlayMode(true);
+      startBotBtn.disabled = false;
       createRoomBtn.disabled = false;
       joinRoomBtn.disabled = false;
       setStatus('通信サーバーとの接続が切れました。ページを再読み込みしてルームを作成し直してください。', true);
     }
   });
 }
+
+startBotBtn.addEventListener('click', () => {
+  ensureAudio();
+  cleanupNetwork(false);
+  clearAllMatchEntities();
+
+  const selectedMap = mapSelect.value;
+  const selectedRule = ruleSelect.value;
+  const selectedDiff = botDifficultySelect.value;
+  const rawCount = Number.parseInt(botCountSelect.value, 10);
+  const botCount = Number.isFinite(rawCount) && rawCount > 0 ? rawCount : 3;
+
+  isOfflineSolo = true;
+  isHost = true;
+  isConnected = true;
+  myId = 'solo_' + Date.now().toString(36);
+  currentRuleId = RULES[selectedRule] ? selectedRule : 'ffa';
+  teamScores = { red: 0, blue: 0 };
+  matchOver = false;
+  ingameRuleSelect.value = currentRuleId;
+  lastSentMoveKey = '';
+  lastHeartbeatSent = 0;
+
+  loadMap(selectedMap);
+  initHostPickups(selectedMap);
+  hostAddPlayer(myId, {
+    name: nameInput.value.trim() || 'Player',
+    avatarStyle: selectedAvatarStyle,
+    avatarColor: selectedAvatarColor
+  });
+  hostSyncBots(botCount, selectedDiff);
+  enterReadyUI('BOT戦');
+
+  lastHostTickAt = Date.now();
+  hostTickTimer = setInterval(hostTick, 66);
+  hostTick();
+  enterPlayMode();
+});
 
 createRoomBtn.addEventListener('click', () => {
   ensureAudio();
@@ -3349,16 +4036,21 @@ createRoomBtn.addEventListener('click', () => {
   }
   const selectedMap = mapSelect.value;
   const selectedRule = ruleSelect.value;
+  currentBotDifficulty = BOT_DIFFICULTIES[botDifficultySelect.value] ? botDifficultySelect.value : 'normal';
+  const rawCount = Number.parseInt(botCountSelect.value, 10);
+  currentBotCount = Number.isFinite(rawCount) ? Math.max(0, Math.min(7, rawCount)) : 0;
+
+  isOfflineSolo = false;
   currentRuleId = RULES[selectedRule] ? selectedRule : 'ffa';
   teamScores = { red: 0, blue: 0 };
   matchOver = false;
   ingameRuleSelect.value = currentRuleId;
 
-  for (const k in hostPlayers) delete hostPlayers[k];
-  for (const k in latestPlayersSnapshot) delete latestPlayersSnapshot[k];
+  clearAllMatchEntities();
   loadMap(selectedMap);
   initHostPickups(selectedMap);
 
+  startBotBtn.disabled = true;
   createRoomBtn.disabled = true;
   joinRoomBtn.disabled = true;
   connectHostWithFailover(0);
@@ -3381,7 +4073,8 @@ joinRoomBtn.addEventListener('click', () => {
   const guestId = 'g_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
 
   cleanupNetwork(false);
-  for (const k in latestPlayersSnapshot) delete latestPlayersSnapshot[k];
+  clearAllMatchEntities();
+  isOfflineSolo = false;
   myId = guestId;
   currentRoomCode = code;
   roomTopics = topics;
@@ -3391,6 +4084,7 @@ joinRoomBtn.addEventListener('click', () => {
   lastSentMoveKey = '';
   lastHeartbeatSent = 0;
 
+  startBotBtn.disabled = true;
   createRoomBtn.disabled = true;
   joinRoomBtn.disabled = true;
   setStatus(`ルーム ${code} (${broker.name}) に接続中...`);
@@ -3415,6 +4109,7 @@ joinRoomBtn.addEventListener('click', () => {
   joinTimeoutTimer = setTimeout(() => {
     if (guestJoinPending || !isConnected) {
       cleanupNetwork(false);
+      startBotBtn.disabled = false;
       createRoomBtn.disabled = false;
       joinRoomBtn.disabled = false;
       setStatus('ルームが見つかりません。コードを確認してください。', true);
@@ -3427,6 +4122,7 @@ joinRoomBtn.addEventListener('click', () => {
       if (mqttClient !== client) return;
       if (err) {
         cleanupNetwork(false);
+        startBotBtn.disabled = false;
         createRoomBtn.disabled = false;
         joinRoomBtn.disabled = false;
         setStatus('ルームへの参加に失敗しました。もう一度お試しください。', true);
@@ -3471,6 +4167,7 @@ joinRoomBtn.addEventListener('click', () => {
     console.warn('MQTT guest error:', err);
     if (mqttClient === client && (guestJoinPending || !isConnected)) {
       cleanupNetwork(false);
+      startBotBtn.disabled = false;
       createRoomBtn.disabled = false;
       joinRoomBtn.disabled = false;
       setStatus('接続エラーが発生しました。もう一度お試しください。', true);
@@ -3481,8 +4178,8 @@ joinRoomBtn.addEventListener('click', () => {
     if (mqttClient === client && isConnected && !guestJoinPending) {
       isConnected = false;
       cleanupNetwork(false);
-      document.exitPointerLock?.();
-      overlay.style.display = 'flex';
+      exitPlayMode(true);
+      startBotBtn.disabled = false;
       createRoomBtn.disabled = false;
       joinRoomBtn.disabled = false;
       setStatus('通信サーバーとの接続が切れました。ページを再読み込みしてください。', true);
@@ -3494,19 +4191,42 @@ applyMapBtn.addEventListener('click', () => {
   if (!isHost || !isConnected) return;
   const nextMap = ingameMapSelect.value;
   const nextRule = ingameRuleSelect.value;
-  hostResetMatch(nextMap, nextRule);
-  setStatus(`「${MAPS[nextMap].name} / ${RULES[nextRule].name}」を適用しました。`);
+  const nextBotDiff = ingameBotDifficulty.value;
+  const nextBotCount = ingameBotCount.value;
+  hostResetMatch(nextMap, nextRule, nextBotCount, nextBotDiff);
+  const diffLabel = (BOT_DIFFICULTIES[currentBotDifficulty] || BOT_DIFFICULTIES.normal).name;
+  setStatus(`「${MAPS[nextMap].name} / ${RULES[nextRule].name} / ${diffLabel} ${currentBotCount}体」を適用しました。`);
 });
 
 copyInviteBtn.addEventListener('click', async () => {
   const inviteUrl = new URL(window.location.href);
   inviteUrl.searchParams.set('room', currentRoomCode);
+  const text = inviteUrl.toString();
+  let copied = false;
   try {
-    await navigator.clipboard.writeText(inviteUrl.toString());
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+      copied = true;
+    }
+  } catch {}
+  if (!copied) {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      copied = document.execCommand('copy');
+      ta.remove();
+    } catch {}
+  }
+  if (copied) {
     copyInviteBtn.textContent = 'コピーしました！';
     setTimeout(() => { copyInviteBtn.textContent = '招待URLをコピー'; }, 2000);
-  } catch {
-    prompt('以下のURLをコピーして友達に送ってください:', inviteUrl.toString());
+  } else {
+    prompt('以下のURLをコピーして友達に送ってください:', text);
   }
 });
 
@@ -3515,9 +4235,82 @@ copyInviteBtn.addEventListener('click', async () => {
 // ==========================================
 const keys = {};
 let isPointerLocked = false;
+let isTouchPlaying = false;
+
+let moveTouchId = null;
+let moveOriginX = 0;
+let moveOriginY = 0;
+let touchMoveX = 0;
+let touchMoveY = 0;
+let lookTouchId = null;
+let lookLastX = 0;
+let lookLastY = 0;
+let fireTouchId = null;
+let fireLastX = 0;
+let fireLastY = 0;
+
+function isControlActive() {
+  return isPointerLocked || isTouchPlaying;
+}
+
+function resetTouchInputs() {
+  moveTouchId = null;
+  lookTouchId = null;
+  fireTouchId = null;
+  touchMoveX = 0;
+  touchMoveY = 0;
+  touchJoystickKnob.style.transform = 'translate(0px, 0px)';
+  playerState.isFiring = false;
+  syncTouchButtonStates();
+}
+
+function enterPlayMode() {
+  if (!isConnected) return;
+  ensureAudio();
+  if (touchControlsEnabled || !document.body.requestPointerLock) {
+    isTouchPlaying = true;
+    overlay.style.display = 'none';
+    document.body.classList.add('in-game');
+  } else {
+    Promise.resolve(document.body.requestPointerLock()).catch(() => {});
+  }
+}
+
+function exitPlayMode(showOverlay = true) {
+  isTouchPlaying = false;
+  resetTouchInputs();
+  scoreboard.style.display = 'none';
+  playerState.isAiming = false;
+  playerState.isFiring = false;
+  playerState.crouchToggle = false;
+  playerState.isCrouching = false;
+  sniperScope.style.display = 'none';
+  gunGroup.visible = playerState.alive;
+  crosshair.style.opacity = '1';
+  document.body.classList.remove('in-game');
+  updatePostureUI();
+  if (document.pointerLockElement === document.body) {
+    document.exitPointerLock?.();
+  }
+  if (showOverlay) {
+    overlay.style.display = 'flex';
+  }
+}
+
+function tryJump() {
+  if (!isControlActive() || !isConnected || !playerState.alive || playerState.isHealing || matchOver) return;
+  if (!playerState.onGround) return;
+  playerState.isSliding = false;
+  playerState.slideTimer = 0;
+  playerState.crouchToggle = false;
+  playerState.isCrouching = false;
+  playerState.vel.y = JUMP_VELOCITY;
+  playerState.onGround = false;
+  updatePostureUI();
+}
 
 function tryStartSlide() {
-  if (!isPointerLocked || !isConnected || !playerState.alive || playerState.isHealing || matchOver) return;
+  if (!isControlActive() || !isConnected || !playerState.alive || playerState.isHealing || matchOver) return;
   if (!playerState.onGround || playerState.isSliding || playerState.slideCooldown > 0) return;
 
   const forward = new THREE.Vector3(-Math.sin(playerState.yaw), 0, -Math.cos(playerState.yaw));
@@ -3527,8 +4320,16 @@ function tryStartSlide() {
   if (keys['KeyS']) dir.sub(forward);
   if (keys['KeyD']) dir.add(right);
   if (keys['KeyA']) dir.sub(right);
+  if (Math.abs(touchMoveY) > 0.12) dir.addScaledVector(forward, -touchMoveY);
+  if (Math.abs(touchMoveX) > 0.12) dir.addScaledVector(right, touchMoveX);
 
-  if (dir.lengthSq() === 0) return;
+  if (dir.lengthSq() === 0) {
+    if (isTouchPlaying) {
+      dir.copy(forward);
+    } else {
+      return;
+    }
+  }
   dir.normalize();
 
   playerState.isSliding = true;
@@ -3540,7 +4341,7 @@ function tryStartSlide() {
 }
 
 function tryUseMedkit() {
-  if (!isPointerLocked || !isConnected || !playerState.alive || playerState.isHealing || matchOver) return;
+  if (!isControlActive() || !isConnected || !playerState.alive || playerState.isHealing || matchOver) return;
   if (!getCurrentRule().allowMedkits) {
     showToast('このルールでは回復アイテムを使用できません');
     return;
@@ -3556,6 +4357,45 @@ function tryUseMedkit() {
   sendToHost({ type: 'startHealItem' });
 }
 
+function applyTouchLookDelta(dx, dy) {
+  if (!isControlActive() || !playerState.alive || matchOver) return;
+  const clampedDx = Math.max(-90, Math.min(90, dx));
+  const clampedDy = Math.max(-90, Math.min(90, dy));
+  const weapon = getActiveWeapon();
+  const adsMult = THREE.MathUtils.lerp(1.0, weapon.adsSensMult, playerState.adsBlend);
+  const sensitivity = 0.0045 * mouseSensitivity * adsMult;
+  playerState.yaw -= clampedDx * sensitivity;
+  playerState.pitch -= clampedDy * sensitivity;
+  playerState.pitch = Math.max(-Math.PI / 2 + 0.05, Math.min(Math.PI / 2 - 0.05, playerState.pitch));
+
+  playerState.swayX = THREE.MathUtils.clamp(playerState.swayX - clampedDx * 0.00018, -0.028, 0.028);
+  playerState.swayY = THREE.MathUtils.clamp(playerState.swayY + clampedDy * 0.00018, -0.022, 0.022);
+}
+
+function findTouchById(touchList, id) {
+  if (id === null) return null;
+  for (let i = 0; i < touchList.length; i++) {
+    if (touchList[i].identifier === id) return touchList[i];
+  }
+  return null;
+}
+
+function updateMoveJoystick(clientX, clientY) {
+  const maxRadius = 44;
+  let dx = clientX - moveOriginX;
+  let dy = clientY - moveOriginY;
+  const dist = Math.hypot(dx, dy);
+  if (dist > maxRadius) {
+    dx = (dx / dist) * maxRadius;
+    dy = (dy / dist) * maxRadius;
+  }
+  touchJoystickKnob.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)`;
+  const normX = dx / maxRadius;
+  const normY = dy / maxRadius;
+  touchMoveX = Math.abs(normX) < 0.12 ? 0 : normX;
+  touchMoveY = Math.abs(normY) < 0.12 ? 0 : normY;
+}
+
 window.addEventListener('contextmenu', (e) => e.preventDefault());
 
 window.addEventListener('keydown', (e) => {
@@ -3567,11 +4407,11 @@ window.addEventListener('keydown', (e) => {
     renderScoreboard();
   }
 
-  if (e.code === 'KeyR' && isPointerLocked && playerState.alive && !playerState.isHealing && !matchOver) {
+  if (e.code === 'KeyR' && isControlActive() && playerState.alive && !playerState.isHealing && !matchOver) {
     startReload();
   }
 
-  if (e.code === 'KeyC' && !e.repeat && isPointerLocked && isConnected && playerState.alive && !playerState.isHealing && !matchOver) {
+  if (e.code === 'KeyC' && !e.repeat && isControlActive() && isConnected && playerState.alive && !playerState.isHealing && !matchOver) {
     if (!playerState.isSliding) {
       playerState.crouchToggle = !playerState.crouchToggle;
     }
@@ -3585,7 +4425,7 @@ window.addEventListener('keydown', (e) => {
     tryUseMedkit();
   }
 
-  if (isPointerLocked && isConnected && playerState.alive && !playerState.isHealing && !matchOver) {
+  if (isControlActive() && isConnected && playerState.alive && !playerState.isHealing && !matchOver) {
     if (e.code === 'Digit1') switchWeapon('ar');
     else if (e.code === 'Digit2') switchWeapon('smg');
     else if (e.code === 'Digit3') switchWeapon('shotgun');
@@ -3601,7 +4441,7 @@ window.addEventListener('keyup', (e) => {
 });
 
 window.addEventListener('wheel', (e) => {
-  if (!isPointerLocked || !isConnected || !playerState.alive || playerState.isHealing || matchOver) return;
+  if (!isControlActive() || !isConnected || !playerState.alive || playerState.isHealing || matchOver) return;
   if (getCurrentRule().lockedWeapon) return;
   const idx = WEAPON_ORDER.indexOf(playerState.weaponId);
   const delta = e.deltaY > 0 ? 1 : -1;
@@ -3610,15 +4450,16 @@ window.addEventListener('wheel', (e) => {
 });
 
 playBtn.addEventListener('click', () => {
-  if (!isConnected) return;
-  ensureAudio();
-  Promise.resolve(document.body.requestPointerLock?.()).catch(() => {});
+  enterPlayMode();
 });
 
 document.addEventListener('pointerlockchange', () => {
   isPointerLocked = document.pointerLockElement === document.body;
-  overlay.style.display = isPointerLocked ? 'none' : 'flex';
-  if (!isPointerLocked) {
+  const active = isControlActive();
+  document.body.classList.toggle('in-game', active);
+  overlay.style.display = active ? 'none' : 'flex';
+  if (!active) {
+    resetTouchInputs();
     scoreboard.style.display = 'none';
     playerState.isAiming = false;
     playerState.isFiring = false;
@@ -3657,6 +4498,7 @@ document.addEventListener('mousedown', (e) => {
 });
 
 document.addEventListener('mouseup', (e) => {
+  if (isTouchPlaying) return;
   if (e.button === 0) {
     playerState.isFiring = false;
   } else if (e.button === 2) {
@@ -3664,10 +4506,213 @@ document.addEventListener('mouseup', (e) => {
   }
 });
 
-window.addEventListener('resize', () => {
+// マルチタッチ操作（移動スティック）
+touchMoveZone.addEventListener('touchstart', (e) => {
+  if (!isControlActive()) return;
+  e.preventDefault();
+  ensureAudio();
+  if (moveTouchId === null && e.changedTouches.length > 0) {
+    const t = e.changedTouches[0];
+    const rect = touchJoystickBase.getBoundingClientRect();
+    moveTouchId = t.identifier;
+    moveOriginX = rect.left + rect.width / 2;
+    moveOriginY = rect.top + rect.height / 2;
+    updateMoveJoystick(t.clientX, t.clientY);
+  }
+}, { passive: false });
+
+touchMoveZone.addEventListener('touchmove', (e) => {
+  const t = findTouchById(e.changedTouches, moveTouchId);
+  if (!t) return;
+  e.preventDefault();
+  updateMoveJoystick(t.clientX, t.clientY);
+}, { passive: false });
+
+function endMoveTouch(e) {
+  const t = findTouchById(e.changedTouches, moveTouchId);
+  if (!t) return;
+  e.preventDefault();
+  moveTouchId = null;
+  touchMoveX = 0;
+  touchMoveY = 0;
+  touchJoystickKnob.style.transform = 'translate(0px, 0px)';
+}
+touchMoveZone.addEventListener('touchend', endMoveTouch, { passive: false });
+touchMoveZone.addEventListener('touchcancel', endMoveTouch, { passive: false });
+
+// マルチタッチ操作（画面ドラッグ視点）
+touchLookZone.addEventListener('touchstart', (e) => {
+  if (!isControlActive()) return;
+  e.preventDefault();
+  ensureAudio();
+  if (lookTouchId === null && e.changedTouches.length > 0) {
+    const t = e.changedTouches[0];
+    lookTouchId = t.identifier;
+    lookLastX = t.clientX;
+    lookLastY = t.clientY;
+  }
+}, { passive: false });
+
+touchLookZone.addEventListener('touchmove', (e) => {
+  const t = findTouchById(e.changedTouches, lookTouchId);
+  if (!t) return;
+  e.preventDefault();
+  applyTouchLookDelta(t.clientX - lookLastX, t.clientY - lookLastY);
+  lookLastX = t.clientX;
+  lookLastY = t.clientY;
+}, { passive: false });
+
+function endLookTouch(e) {
+  const t = findTouchById(e.changedTouches, lookTouchId);
+  if (!t) return;
+  e.preventDefault();
+  lookTouchId = null;
+}
+touchLookZone.addEventListener('touchend', endLookTouch, { passive: false });
+touchLookZone.addEventListener('touchcancel', endLookTouch, { passive: false });
+
+// 射撃ボタン（押下即射撃 ＋ 押し続けフルオート ＋ ドラッグ照準）
+btnTouchFire.addEventListener('touchstart', (e) => {
+  if (!isControlActive()) return;
+  e.preventDefault();
+  e.stopPropagation();
+  ensureAudio();
+  if (fireTouchId === null && e.changedTouches.length > 0) {
+    const t = e.changedTouches[0];
+    fireTouchId = t.identifier;
+    fireLastX = t.clientX;
+    fireLastY = t.clientY;
+    if (isConnected && playerState.alive && !playerState.isHealing && !matchOver) {
+      playerState.isFiring = true;
+      shoot();
+      syncTouchButtonStates();
+    }
+  }
+}, { passive: false });
+
+btnTouchFire.addEventListener('touchmove', (e) => {
+  const t = findTouchById(e.changedTouches, fireTouchId);
+  if (!t) return;
+  e.preventDefault();
+  applyTouchLookDelta(t.clientX - fireLastX, t.clientY - fireLastY);
+  fireLastX = t.clientX;
+  fireLastY = t.clientY;
+}, { passive: false });
+
+function endFireTouch(e) {
+  const t = findTouchById(e.changedTouches, fireTouchId);
+  if (!t) return;
+  e.preventDefault();
+  fireTouchId = null;
+  playerState.isFiring = false;
+  syncTouchButtonStates();
+}
+btnTouchFire.addEventListener('touchend', endFireTouch, { passive: false });
+btnTouchFire.addEventListener('touchcancel', endFireTouch, { passive: false });
+
+function bindTouchTapAction(el, fn) {
+  let lastTouchAt = 0;
+  el.addEventListener('touchstart', (e) => {
+    lastTouchAt = performance.now();
+    e.preventDefault();
+    e.stopPropagation();
+    ensureAudio();
+    fn();
+  }, { passive: false });
+  el.addEventListener('click', (e) => {
+    if (performance.now() - lastTouchAt < 450) return;
+    e.stopPropagation();
+    ensureAudio();
+    fn();
+  });
+}
+
+bindTouchTapAction(btnTouchAds, () => {
+  if (!isControlActive() || !isConnected || !playerState.alive || playerState.isHealing || matchOver) return;
+  playerState.isAiming = !playerState.isAiming;
+  syncTouchButtonStates();
+});
+bindTouchTapAction(btnTouchJump, () => {
+  tryJump();
+});
+bindTouchTapAction(btnTouchReload, () => {
+  if (!isControlActive() || !isConnected || !playerState.alive || playerState.isHealing || matchOver) return;
+  startReload();
+});
+bindTouchTapAction(btnTouchCrouch, () => {
+  if (!isControlActive() || !isConnected || !playerState.alive || playerState.isHealing || matchOver) return;
+  if (!playerState.isSliding) {
+    playerState.crouchToggle = !playerState.crouchToggle;
+    updatePostureUI();
+  }
+});
+bindTouchTapAction(btnTouchSlide, () => {
+  tryStartSlide();
+});
+bindTouchTapAction(btnTouchMedkit, () => {
+  tryUseMedkit();
+});
+
+let lastSlotTouchAt = 0;
+function handleWeaponSlotSelect(e) {
+  const slot = e.target.closest('.weapon-slot');
+  if (!slot) return;
+  if (e.type === 'touchstart') {
+    lastSlotTouchAt = performance.now();
+    e.preventDefault();
+    e.stopPropagation();
+  } else if (performance.now() - lastSlotTouchAt < 450) {
+    return;
+  }
+  if (!isControlActive() || !isConnected || !playerState.alive || playerState.isHealing || matchOver) return;
+  ensureAudio();
+  switchWeapon(slot.dataset.weapon);
+}
+weaponSlotsContainer.addEventListener('touchstart', handleWeaponSlotSelect, { passive: false });
+weaponSlotsContainer.addEventListener('click', handleWeaponSlotSelect);
+
+btnTouchScoreboard.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (!isConnected) return;
+  const shown = scoreboard.style.display === 'block';
+  if (shown) {
+    scoreboard.style.display = 'none';
+  } else {
+    scoreboard.style.display = 'block';
+    renderScoreboard();
+  }
+});
+
+btnTouchMenu.addEventListener('click', (e) => {
+  e.stopPropagation();
+  exitPlayMode(true);
+});
+
+btnTouchFullscreen.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (document.fullscreenElement) {
+    Promise.resolve(document.exitFullscreen?.()).catch(() => {});
+  } else {
+    Promise.resolve(document.documentElement.requestFullscreen?.()).catch(() => {});
+  }
+});
+
+function updateRendererViewport() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+window.addEventListener('resize', updateRendererViewport);
+window.addEventListener('orientationchange', () => {
+  resetTouchInputs();
+  updateRendererViewport();
+  setTimeout(updateRendererViewport, 120);
+});
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    resetTouchInputs();
+  }
 });
 
 function startReload() {
@@ -4017,12 +5062,12 @@ function animate(now) {
     playerState.fireBloom = Math.max(0, playerState.fireBloom - dt * 0.14);
 
     // フルオート射撃
-    if (playerState.isFiring && weapon.auto && isPointerLocked && !playerState.isHealing && !matchOver) {
+    if (playerState.isFiring && weapon.auto && isControlActive() && !playerState.isHealing && !matchOver) {
       shoot();
     }
 
-    // ADS (右クリックエイム) ブレンド更新
-    const wantAds = playerState.isAiming && isPointerLocked && !playerState.isReloading && !playerState.isHealing && !matchOver;
+    // ADS (右クリック / タッチエイム) ブレンド更新
+    const wantAds = playerState.isAiming && isControlActive() && !playerState.isReloading && !playerState.isHealing && !matchOver;
     playerState.adsBlend = THREE.MathUtils.lerp(playerState.adsBlend, wantAds ? 1 : 0, Math.min(1, dt * 14));
 
     const showScope = weapon.scoped && wantAds && playerState.adsBlend > 0.72;
@@ -4045,7 +5090,7 @@ function animate(now) {
 
     // しゃがみ状態更新（Cトグル or Ctrl長押し、スライド中/回復中は非しゃがみ）
     const nextCrouch =
-      isPointerLocked &&
+      isControlActive() &&
       !playerState.isSliding &&
       !playerState.isHealing &&
       !matchOver &&
@@ -4083,20 +5128,23 @@ function animate(now) {
         const t = 1 - playerState.slideTimer / SLIDE_DURATION;
         const speed = THREE.MathUtils.lerp(SLIDE_INITIAL_SPEED, SLIDE_END_SPEED, t);
         moveStep.copy(playerState.slideDir).multiplyScalar(speed * dt);
-      } else if (isPointerLocked) {
+      } else if (isControlActive()) {
         const forward = new THREE.Vector3(-Math.sin(playerState.yaw), 0, -Math.cos(playerState.yaw));
         const right = new THREE.Vector3(Math.cos(playerState.yaw), 0, -Math.sin(playerState.yaw));
         if (keys['KeyW']) moveStep.add(forward);
         if (keys['KeyS']) moveStep.sub(forward);
         if (keys['KeyD']) moveStep.add(right);
         if (keys['KeyA']) moveStep.sub(right);
+        if (touchMoveY !== 0) moveStep.addScaledVector(forward, -touchMoveY);
+        if (touchMoveX !== 0) moveStep.addScaledVector(right, touchMoveX);
         if (moveStep.lengthSq() > 0) {
+          const throttle = Math.min(1, moveStep.length());
           const crouchMult = playerState.isCrouching ? CROUCH_MOVE_MULT : 1.0;
           const speedMult =
             weapon.moveMult *
             crouchMult *
             THREE.MathUtils.lerp(1, weapon.adsMoveMult, playerState.adsBlend);
-          moveStep.normalize().multiplyScalar(MOVE_SPEED * speedMult * dt);
+          moveStep.normalize().multiplyScalar(MOVE_SPEED * speedMult * throttle * dt);
         }
       }
 
@@ -4116,13 +5164,8 @@ function animate(now) {
       const targetMoveRatio = dt > 0 ? Math.min(1.8, actualMoved / (MOVE_SPEED * dt)) : 0;
       playerState.moveRatio = THREE.MathUtils.lerp(playerState.moveRatio, targetMoveRatio, Math.min(1, dt * 16));
 
-      if (isPointerLocked && keys['Space'] && playerState.onGround) {
-        playerState.isSliding = false;
-        playerState.slideTimer = 0;
-        playerState.crouchToggle = false;
-        playerState.isCrouching = false;
-        playerState.vel.y = JUMP_VELOCITY;
-        playerState.onGround = false;
+      if (isControlActive() && keys['Space'] && playerState.onGround) {
+        tryJump();
       }
     } else {
       playerState.moveRatio = THREE.MathUtils.lerp(playerState.moveRatio, 0, Math.min(1, dt * 16));

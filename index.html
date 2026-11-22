@@ -2,16 +2,33 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <title>3D Browser FPS Multiplayer</title>
   <style>
-    * { box-sizing: border-box; user-select: none; }
-    body {
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body {
       margin: 0;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
       overflow: hidden;
+      overscroll-behavior: none;
+      touch-action: none;
       background: #0b1120;
       font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
       color: #f8fafc;
+    }
+    canvas {
+      display: block;
+      touch-action: none;
     }
 
     /* 画面フラッシュ・ビネット類 */
@@ -897,8 +914,10 @@
       align-items: center;
       z-index: 20;
       text-align: center;
-      padding: 16px;
+      padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
       overflow-y: auto;
+      touch-action: pan-y;
+      -webkit-overflow-scrolling: touch;
     }
     .panel {
       background: rgba(24, 33, 50, 0.92);
@@ -907,6 +926,7 @@
       padding: 22px 26px;
       width: 100%;
       max-width: 730px;
+      margin: auto 0;
       box-shadow: 0 24px 55px rgba(0, 0, 0, 0.55);
     }
     .panel h1 {
@@ -927,6 +947,26 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
+    }
+    #controls-touch { display: none; }
+    body.touch-mode #controls-pc { display: none; }
+    body.touch-mode #controls-touch { display: flex; }
+
+    #mobile-orientation-hint {
+      display: none;
+      margin-bottom: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgba(56, 189, 248, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #bae6fd;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    @media (orientation: portrait) {
+      body.touch-mode #mobile-orientation-hint {
+        display: block;
+      }
     }
 
     .lobby-grid {
@@ -972,6 +1012,10 @@
       background: #0f172a;
       color: #fff;
       outline: none;
+    }
+    input[type="text"], .room-code-display {
+      user-select: text;
+      -webkit-user-select: text;
     }
     input[type="text"]:focus, select:focus { border-color: #3b82f6; }
 
@@ -1035,6 +1079,20 @@
     .btn-success:hover:not(:disabled) { background: #059669; }
     .btn-secondary { background: #475569; }
     .btn-secondary:hover:not(:disabled) { background: #334155; }
+    .btn-accent { background: linear-gradient(135deg, #f59e0b, #ea580c); }
+    .btn-accent:hover:not(:disabled) { background: linear-gradient(135deg, #d97706, #c2410c); }
+    .bot-setup-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .panel { padding: 16px 14px; }
+      .panel h1 { font-size: 21px; }
+      input[type="text"], select { font-size: 16px; }
+      .btn { min-height: 44px; touch-action: manipulation; }
+    }
 
     .divider {
       display: flex;
@@ -1068,6 +1126,13 @@
       border-radius: 10px;
       padding: 12px;
       margin-bottom: 12px;
+    }
+    #solo-bot-banner { display: none; }
+    #solo-bot-summary {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fbbf24;
+      margin-top: 4px;
     }
     .room-code-display {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -1149,6 +1214,348 @@
       font-size: 13px;
       min-height: 18px;
       color: #facc15;
+    }
+
+    /* スマホ・タッチ操作オーバーレイ */
+    #touch-controls {
+      display: none;
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 11;
+    }
+    body.touch-mode.in-game #touch-controls {
+      display: block;
+    }
+    #touch-look-zone {
+      position: fixed;
+      inset: 0;
+      pointer-events: auto;
+      touch-action: none;
+      z-index: 1;
+    }
+    #touch-move-zone {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 42vw;
+      max-width: 240px;
+      height: 55vh;
+      max-height: 280px;
+      pointer-events: auto;
+      touch-action: none;
+      z-index: 2;
+    }
+    #touch-joystick-base {
+      position: absolute;
+      left: max(18px, env(safe-area-inset-left));
+      bottom: max(18px, env(safe-area-inset-bottom));
+      width: 114px;
+      height: 114px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.42);
+      border: 2px solid rgba(148, 163, 184, 0.38);
+      pointer-events: none;
+    }
+    #touch-joystick-knob {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 48px;
+      height: 48px;
+      margin-left: -24px;
+      margin-top: -24px;
+      border-radius: 50%;
+      background: rgba(56, 189, 248, 0.72);
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      pointer-events: none;
+    }
+    .touch-btn {
+      position: relative;
+      pointer-events: auto;
+      touch-action: none;
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
+      background: rgba(15, 23, 42, 0.58);
+      color: #f8fafc;
+      font-weight: 800;
+      font-family: inherit;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.38);
+      padding: 0;
+    }
+    .touch-medkit-btn {
+      position: fixed;
+      left: max(18px, env(safe-area-inset-left));
+      bottom: calc(max(18px, env(safe-area-inset-bottom)) + 124px);
+      width: 64px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(16, 185, 129, 0.3);
+      border-color: rgba(16, 185, 129, 0.75);
+      font-size: 13px;
+      z-index: 3;
+      gap: 4px;
+    }
+    .touch-medkit-btn.empty {
+      opacity: 0.42;
+      background: rgba(15, 23, 42, 0.55);
+      border-color: rgba(148, 163, 184, 0.35);
+    }
+    #touch-right-pad {
+      position: fixed;
+      right: max(12px, env(safe-area-inset-right));
+      bottom: max(14px, env(safe-area-inset-bottom));
+      width: 184px;
+      height: 172px;
+      pointer-events: none;
+      z-index: 3;
+    }
+    #touch-right-pad .touch-btn {
+      position: absolute;
+    }
+    #btn-touch-fire {
+      width: 72px;
+      height: 72px;
+      right: 4px;
+      bottom: 26px;
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.72), rgba(234, 88, 12, 0.72));
+      border-color: rgba(252, 165, 165, 0.85);
+      font-size: 13px;
+      letter-spacing: 0.06em;
+    }
+    #btn-touch-fire.firing {
+      transform: scale(0.95);
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.92), rgba(249, 115, 22, 0.92));
+    }
+    #btn-touch-ads {
+      width: 52px;
+      height: 52px;
+      right: 88px;
+      bottom: 54px;
+      font-size: 12px;
+    }
+    #btn-touch-ads.active {
+      background: rgba(6, 182, 212, 0.72);
+      border-color: #67e8f9;
+      color: #fff;
+    }
+    #btn-touch-jump {
+      width: 50px;
+      height: 50px;
+      right: 12px;
+      bottom: 110px;
+      font-size: 11px;
+    }
+    #btn-touch-reload {
+      width: 46px;
+      height: 46px;
+      right: 76px;
+      bottom: 118px;
+      font-size: 14px;
+    }
+    #btn-touch-crouch {
+      width: 46px;
+      height: 46px;
+      right: 80px;
+      bottom: 0px;
+      font-size: 9px;
+    }
+    #btn-touch-crouch.active {
+      background: rgba(250, 204, 21, 0.78);
+      border-color: #fde047;
+      color: #0f172a;
+    }
+    #btn-touch-slide {
+      width: 46px;
+      height: 46px;
+      right: 132px;
+      bottom: 4px;
+      font-size: 10px;
+    }
+    #btn-touch-slide.cooldown {
+      opacity: 0.42;
+    }
+    #touch-top-actions {
+      position: fixed;
+      top: max(8px, env(safe-area-inset-top));
+      right: max(8px, env(safe-area-inset-right));
+      display: flex;
+      gap: 6px;
+      z-index: 4;
+      pointer-events: auto;
+    }
+    .touch-top-btn {
+      height: 32px;
+      min-width: 34px;
+      padding: 0 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(15, 23, 42, 0.72);
+      color: #f8fafc;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    /* タッチモード時のコンパクトHUD */
+    body.touch-mode #top-left-stack {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 6px;
+      top: max(8px, env(safe-area-inset-top));
+      left: max(8px, env(safe-area-inset-left));
+    }
+    body.touch-mode #minimap-wrap {
+      width: 78px;
+      padding: 3px;
+    }
+    body.touch-mode #minimap {
+      width: 70px;
+      height: 70px;
+    }
+    body.touch-mode .minimap-label {
+      font-size: 7px;
+      top: 4px;
+      left: 6px;
+    }
+    body.touch-mode #stats-hud {
+      min-width: auto;
+      padding: 5px 8px;
+    }
+    body.touch-mode .stats-row {
+      gap: 8px;
+      font-size: 11px;
+    }
+    body.touch-mode .room-meta {
+      font-size: 10px;
+      margin-top: 3px;
+      padding-top: 3px;
+    }
+    body.touch-mode .tab-hint {
+      display: none;
+    }
+    body.touch-mode #match-banner {
+      top: max(8px, env(safe-area-inset-top));
+      padding: 5px 10px;
+      gap: 6px;
+    }
+    body.touch-mode #match-rule-badge {
+      font-size: 10px;
+      padding: 2px 7px;
+    }
+    body.touch-mode #match-score-display {
+      font-size: 11px;
+    }
+    body.touch-mode #kill-feed {
+      top: calc(max(8px, env(safe-area-inset-top)) + 48px);
+      right: max(8px, env(safe-area-inset-right));
+    }
+    body.touch-mode .kill-entry {
+      font-size: 11px;
+      padding: 4px 8px;
+    }
+    body.touch-mode #hp-hud {
+      padding: 6px 9px;
+    }
+    body.touch-mode #hp-hud .ability-row,
+    body.touch-mode #hp-hud .crouch-hint {
+      display: none;
+    }
+    body.touch-mode #hp-val {
+      font-size: 18px;
+    }
+    body.touch-mode #hp-bar-bg {
+      height: 7px;
+    }
+    body.touch-mode #ammo-hud {
+      pointer-events: auto;
+      z-index: 12;
+      padding: 6px 8px;
+    }
+    body.touch-mode .weapon-header {
+      margin-bottom: 2px;
+    }
+    body.touch-mode #weapon-name-hud {
+      font-size: 10px;
+    }
+    body.touch-mode #weapon-firemode-hud {
+      display: none;
+    }
+    body.touch-mode #ammo-count {
+      font-size: 20px;
+    }
+    body.touch-mode #ammo-max {
+      font-size: 11px;
+    }
+    body.touch-mode #weapon-slots {
+      margin-top: 5px;
+      padding-top: 5px;
+      gap: 4px;
+    }
+    body.touch-mode .weapon-slot {
+      padding: 6px 3px;
+      font-size: 11px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    body.touch-mode .weapon-slot .kbd {
+      display: none;
+    }
+
+    @media (orientation: landscape) {
+      body.touch-mode #ammo-hud {
+        bottom: max(8px, env(safe-area-inset-bottom));
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        min-width: 210px;
+        width: 210px;
+      }
+      body.touch-mode #hp-hud {
+        bottom: calc(max(8px, env(safe-area-inset-bottom)) + 88px);
+        left: 50%;
+        transform: translateX(-50%);
+        width: 176px;
+      }
+      body.touch-mode #heal-channel-box {
+        bottom: 142px;
+        width: 235px;
+      }
+    }
+
+    @media (orientation: portrait) {
+      body.touch-mode #hp-hud {
+        bottom: calc(max(14px, env(safe-area-inset-bottom)) + 210px);
+        left: max(10px, env(safe-area-inset-left));
+        width: 162px;
+      }
+      body.touch-mode #ammo-hud {
+        bottom: calc(max(14px, env(safe-area-inset-bottom)) + 210px);
+        right: max(10px, env(safe-area-inset-right));
+        left: auto;
+        transform: none;
+        min-width: 172px;
+        width: 172px;
+      }
+      body.touch-mode #heal-channel-box {
+        bottom: 298px;
+        width: min(86vw, 250px);
+      }
+    }
+
+    @media (max-width: 600px) {
+      body.touch-mode #match-banner {
+        top: calc(max(8px, env(safe-area-inset-top)) + 86px);
+      }
+      body.touch-mode #stats-hud .room-meta > div:nth-child(2) {
+        display: none;
+      }
     }
   </style>
 
@@ -1343,10 +1750,34 @@
     </div>
   </div>
 
+  <!-- スマホ用マルチタッチ操作パッド -->
+  <div id="touch-controls">
+    <div id="touch-look-zone"></div>
+    <div id="touch-move-zone">
+      <div id="touch-joystick-base">
+        <div id="touch-joystick-knob"></div>
+      </div>
+    </div>
+    <button type="button" id="btn-touch-medkit" class="touch-btn touch-medkit-btn">✚ <span id="touch-medkit-count">2</span></button>
+    <div id="touch-right-pad">
+      <button type="button" id="btn-touch-fire" class="touch-btn">FIRE</button>
+      <button type="button" id="btn-touch-ads" class="touch-btn">ADS</button>
+      <button type="button" id="btn-touch-jump" class="touch-btn">JUMP</button>
+      <button type="button" id="btn-touch-reload" class="touch-btn">R</button>
+      <button type="button" id="btn-touch-crouch" class="touch-btn">しゃがみ</button>
+      <button type="button" id="btn-touch-slide" class="touch-btn">SLIDE</button>
+    </div>
+    <div id="touch-top-actions">
+      <button type="button" id="btn-touch-scoreboard" class="touch-top-btn">戦績</button>
+      <button type="button" id="btn-touch-fullscreen" class="touch-top-btn" aria-label="全画面切替">⛶</button>
+      <button type="button" id="btn-touch-menu" class="touch-top-btn" aria-label="メニュー">☰</button>
+    </div>
+  </div>
+
   <div id="overlay">
     <div class="panel">
       <h1>3D BROWSER FPS</h1>
-      <div class="controls-grid">
+      <div id="controls-pc" class="controls-grid">
         <span><span class="kbd">WASD</span> 移動</span>
         <span><span class="kbd">Space</span> ジャンプ</span>
         <span><span class="kbd">C / Ctrl</span> しゃがみ</span>
@@ -1357,6 +1788,14 @@
         <span><span class="kbd">R</span> リロード</span>
         <span><span class="kbd">E</span> 回復(5s)</span>
         <span><span class="kbd">Tab</span> 戦績</span>
+      </div>
+      <div id="controls-touch" class="controls-grid">
+        <span><span class="kbd">左スティック</span> 移動</span>
+        <span><span class="kbd">右画面ドラッグ</span> 視点</span>
+        <span><span class="kbd">FIRE</span> 射撃＋ドラッグ照準</span>
+        <span><span class="kbd">ADS</span> エイム切替</span>
+        <span><span class="kbd">JUMP / SLIDE / しゃがみ</span> 移動アクション</span>
+        <span><span class="kbd">R / ✚ / 下段スロット</span> 武器・回復</span>
       </div>
 
       <div id="lobby-section">
@@ -1411,23 +1850,52 @@
               </select>
             </div>
 
-            <button id="create-room-btn" class="btn btn-primary">ルームを作成（ホスト）</button>
+            <div class="bot-setup-grid">
+              <div class="field-group">
+                <label for="bot-difficulty-select">ボット難易度</label>
+                <select id="bot-difficulty-select">
+                  <option value="easy">初級 (EASY)</option>
+                  <option value="normal" selected>中級 (NORMAL)</option>
+                  <option value="hard">上級 (HARD)</option>
+                  <option value="expert">達人 (EXPERT)</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label for="bot-count-select">ボット人数</label>
+                <select id="bot-count-select">
+                  <option value="0">0体 (対人のみ)</option>
+                  <option value="1">1体</option>
+                  <option value="2">2体</option>
+                  <option value="3" selected>3体</option>
+                  <option value="5">5体</option>
+                  <option value="7">7体</option>
+                </select>
+              </div>
+            </div>
+
+            <button id="start-bot-btn" type="button" class="btn btn-accent">ボット戦を開始（1人用・即プレイ）</button>
+            <button id="create-room-btn" type="button" class="btn btn-primary">ルームを作成（マルチ・ホスト）</button>
 
             <div class="divider">または友達のルームに参加</div>
 
             <div class="join-row">
               <input id="room-code-input" type="text" placeholder="ルームコード (例: AB12CD)" maxlength="12" />
-              <button id="join-room-btn" class="btn btn-success">参加</button>
+              <button id="join-room-btn" type="button" class="btn btn-success">参加</button>
             </div>
           </div>
         </div>
       </div>
 
       <div id="ready-section">
-        <div class="invite-box">
+        <div id="invite-box" class="invite-box">
           <div style="font-size: 12px; color: #94a3b8;">ルームコード（友達に共有）</div>
           <div id="room-code-display" class="room-code-display">------</div>
-          <button id="copy-invite-btn" class="btn btn-secondary">招待URLをコピー</button>
+          <button id="copy-invite-btn" type="button" class="btn btn-secondary">招待URLをコピー</button>
+        </div>
+
+        <div id="solo-bot-banner" class="invite-box">
+          <div style="font-size: 12px; color: #94a3b8;">オフライン BOT モード</div>
+          <div id="solo-bot-summary">難易度: 中級 (NORMAL) / ボット 3体</div>
         </div>
 
         <div id="host-map-controls">
@@ -1445,15 +1913,33 @@
               <option value="headshot">HS限定戦</option>
             </select>
           </div>
-          <button id="apply-map-btn" class="btn btn-success">設定を適用・リマッチ</button>
+          <div class="match-switch-grid">
+            <select id="ingame-bot-difficulty">
+              <option value="easy">ボット: 初級 (EASY)</option>
+              <option value="normal" selected>ボット: 中級 (NORMAL)</option>
+              <option value="hard">ボット: 上級 (HARD)</option>
+              <option value="expert">ボット: 達人 (EXPERT)</option>
+            </select>
+            <select id="ingame-bot-count">
+              <option value="0">ボット: 0体</option>
+              <option value="1">ボット: 1体</option>
+              <option value="2">ボット: 2体</option>
+              <option value="3" selected>ボット: 3体</option>
+              <option value="5">ボット: 5体</option>
+              <option value="7">ボット: 7体</option>
+            </select>
+          </div>
+          <button id="apply-map-btn" type="button" class="btn btn-success">設定を適用・リマッチ</button>
         </div>
 
-        <button id="play-btn" class="btn btn-primary">クリックしてプレイ</button>
+        <div id="mobile-orientation-hint">💡 横画面（ランドスケープ）にするとさらに操作しやすくなります</div>
+        <button id="play-btn" type="button" class="btn btn-primary">クリックしてプレイ</button>
+        <button id="back-to-lobby-btn" type="button" class="btn btn-secondary" style="margin-top:8px;">ロビーに戻る</button>
       </div>
 
       <div id="settings-box">
         <div class="setting-row">
-          <span class="setting-label">マウス感度</span>
+          <span class="setting-label">視点感度</span>
           <div class="sens-controls">
             <input id="sens-slider" type="range" min="0.2" max="3.0" step="0.1" value="1.0" />
             <span id="sens-val">1.0x</span>
@@ -1461,7 +1947,11 @@
         </div>
         <div class="setting-row">
           <span class="setting-label">効果音 (Web Audio)</span>
-          <button id="sound-toggle" class="btn btn-secondary sound-btn">ON</button>
+          <button id="sound-toggle" type="button" class="btn btn-secondary sound-btn">ON</button>
+        </div>
+        <div class="setting-row">
+          <span class="setting-label">タッチ操作</span>
+          <button id="touch-mode-toggle" type="button" class="btn btn-secondary sound-btn">OFF</button>
         </div>
       </div>
 
