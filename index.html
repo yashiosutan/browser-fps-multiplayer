@@ -1461,7 +1461,10 @@
       padding: 4px 8px;
     }
     body.touch-mode #hp-hud {
-      padding: 6px 9px;
+      padding: 5px 9px;
+    }
+    body.touch-mode .hp-header {
+      margin-bottom: 4px;
     }
     body.touch-mode #hp-hud .ability-row,
     body.touch-mode #hp-hud .crouch-hint {
@@ -1487,6 +1490,9 @@
     body.touch-mode #weapon-firemode-hud {
       display: none;
     }
+    body.touch-mode #reload-status {
+      display: none;
+    }
     body.touch-mode #ammo-count {
       font-size: 20px;
     }
@@ -1509,8 +1515,17 @@
     }
 
     @media (orientation: landscape) {
+      body.touch-mode #match-banner {
+        top: calc(max(8px, env(safe-area-inset-top)) + 38px);
+        right: max(8px, env(safe-area-inset-right));
+        left: auto;
+        transform: none;
+      }
+      body.touch-mode #kill-feed {
+        top: calc(max(8px, env(safe-area-inset-top)) + 78px);
+      }
       body.touch-mode #ammo-hud {
-        bottom: max(8px, env(safe-area-inset-bottom));
+        bottom: max(6px, env(safe-area-inset-bottom));
         left: 50%;
         right: auto;
         transform: translateX(-50%);
@@ -1518,18 +1533,21 @@
         width: 210px;
       }
       body.touch-mode #hp-hud {
-        bottom: calc(max(8px, env(safe-area-inset-bottom)) + 88px);
+        bottom: calc(max(6px, env(safe-area-inset-bottom)) + 100px);
         left: 50%;
         transform: translateX(-50%);
         width: 176px;
       }
       body.touch-mode #heal-channel-box {
-        bottom: 142px;
-        width: 235px;
+        bottom: 158px;
+        width: 228px;
       }
     }
 
     @media (orientation: portrait) {
+      body.touch-mode #kill-feed {
+        top: calc(max(8px, env(safe-area-inset-top)) + 128px);
+      }
       body.touch-mode #hp-hud {
         bottom: calc(max(14px, env(safe-area-inset-bottom)) + 210px);
         left: max(10px, env(safe-area-inset-left));
