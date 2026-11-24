@@ -2972,7 +2972,7 @@ function renderPublicRooms() {
 
   if (activeRooms.length === 0) {
     publicRoomsList.innerHTML =
-      '<div class="public-rooms-empty">公開中の対戦ルームが見つかりません（ルーム作成後に自動表示）</div>';
+      '<div class="rooms-empty">公開中の対戦ルームが見つかりません（ルーム作成後に自動表示）</div>';
     return;
   }
 
@@ -2984,19 +2984,19 @@ function renderPublicRooms() {
     const isReq = room.access !== 'open';
 
     const row = document.createElement('div');
-    row.className = 'public-room-row';
+    row.className = 'room-card';
     row.innerHTML = `
-      <div class="public-room-meta">
-        <div class="public-room-top">
-          <span class="room-code-pill">${escapeHtml(room.code)}</span>
-          <span class="room-host-name">${escapeHtml(room.hostName)}</span>
+      <div class="room-card-info">
+        <div class="room-card-title">
+          <span>${escapeHtml(room.code)}</span>
+          <span>${escapeHtml(room.hostName)}</span>
           <span class="room-badge ${isReq ? 'request' : 'open'}">${isReq ? '承認制' : '自由参加'}</span>
         </div>
-        <div class="public-room-sub">${escapeHtml(mapName)} / ${escapeHtml(ruleName)} ・ ${room.players}/${room.maxPlayers || 8}人${room.bots > 0 ? ` (BOT ${room.bots})` : ''}</div>
+        <div class="room-card-meta">${escapeHtml(mapName)} / ${escapeHtml(ruleName)} ・ ${room.players}/${room.maxPlayers || 8}人${room.bots > 0 ? ` (BOT ${room.bots})` : ''}</div>
       </div>
     `;
     const btn = document.createElement('button');
-    btn.className = 'btn-join-req';
+    btn.className = 'btn-primary room-join-btn btn-join-req';
     btn.type = 'button';
     btn.disabled = isFull || guestJoinPending;
     btn.textContent = isFull ? '満員' : isReq ? '参加申請' : '参加';
@@ -3506,7 +3506,7 @@ function handleHostReceive(senderId, msg) {
         });
         renderJoinRequestPanel();
         showToast(`参加申請: ${cleanReqName} ([Y]承認 / [N]拒否)`);
-        SoundFX.pickup();
+        SoundFX.healStart();
       }
       sendToPlayerFromHost(senderId, {
         type: 'joinPending',
@@ -6073,8 +6073,8 @@ function animate(now) {
         const pct = (remainMs / SPAWN_PROTECT_MS) * 100;
         spawnProtectBox.style.display = 'block';
         spawnProtectVignette.style.display = 'block';
-        if (spawnProtectTimerEl) spawnProtectTimerEl.textContent = `${(remainMs / 1000).toFixed(1)}s`;
-        if (spawnProtectFillEl) spawnProtectFillEl.style.width = `${pct}%`;
+        if (spawnProtectTimer) spawnProtectTimer.textContent = `${(remainMs / 1000).toFixed(1)}s`;
+        if (spawnProtectFill) spawnProtectFill.style.width = `${pct}%`;
       } else if (playerState.spawnProtectEndTime > 0) {
         playerState.spawnProtectEndTime = 0;
         spawnProtectBox.style.display = 'none';
