@@ -64,6 +64,56 @@
       from { opacity: 0.35; }
       to { opacity: 0.85; }
     }
+    #spawn-protect-vignette {
+      position: fixed;
+      inset: 0;
+      box-shadow: inset 0 0 65px rgba(56, 189, 248, 0.48);
+      pointer-events: none;
+      z-index: 4;
+      display: none;
+    }
+    #spawn-protect-box {
+      position: fixed;
+      top: 102px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 280px;
+      background: rgba(12, 19, 34, 0.88);
+      border: 1px solid rgba(56, 189, 248, 0.65);
+      box-shadow: 0 0 22px rgba(56, 189, 248, 0.25);
+      border-radius: 10px;
+      padding: 8px 12px;
+      display: none;
+      pointer-events: none;
+      z-index: 13;
+    }
+    .spawn-protect-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #38bdf8;
+      margin-bottom: 3px;
+    }
+    .spawn-protect-sub {
+      font-size: 10px;
+      color: #cbd5e1;
+      margin-bottom: 5px;
+      text-align: center;
+    }
+    .spawn-protect-track {
+      width: 100%;
+      height: 5px;
+      background: #1e293b;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    #spawn-protect-fill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+    }
 
     /* スナイパースコープ（ADS時オーバーレイ） */
     #sniper-scope {
@@ -288,9 +338,8 @@
       top: 18%;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(15, 23, 42, 0.88);
+      background: rgba(12, 19, 34, 0.9);
       border: 1px solid rgba(148, 163, 184, 0.35);
-      backdrop-filter: blur(8px);
       padding: 8px 18px;
       border-radius: 999px;
       font-size: 13px;
@@ -310,10 +359,9 @@
       left: 50%;
       transform: translateX(-50%);
       width: 300px;
-      background: rgba(15, 23, 42, 0.86);
+      background: rgba(12, 19, 34, 0.88);
       border: 1px solid rgba(16, 185, 129, 0.6);
       box-shadow: 0 0 24px rgba(16, 185, 129, 0.25);
-      backdrop-filter: blur(8px);
       border-radius: 10px;
       padding: 10px 14px;
       display: none;
@@ -350,9 +398,8 @@
 
     /* 共通グラスHUD */
     .hud-box {
-      background: rgba(15, 23, 42, 0.72);
+      background: rgba(12, 19, 34, 0.84);
       border: 1px solid rgba(148, 163, 184, 0.26);
-      backdrop-filter: blur(10px);
       border-radius: 10px;
       padding: 10px 14px;
       pointer-events: none;
@@ -640,7 +687,7 @@
       bottom: 18px;
       right: 18px;
       text-align: right;
-      min-width: 244px;
+      min-width: 288px;
     }
     .weapon-header {
       display: flex;
@@ -702,14 +749,14 @@
       background: #facc15;
     }
     #weapon-slots {
-      display: flex;
-      gap: 5px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
       margin-top: 9px;
       padding-top: 8px;
       border-top: 1px solid rgba(148, 163, 184, 0.18);
     }
     .weapon-slot {
-      flex: 1;
       text-align: center;
       padding: 4px 5px;
       border-radius: 6px;
@@ -739,8 +786,7 @@
       z-index: 10;
     }
     .kill-entry {
-      background: rgba(15, 23, 42, 0.78);
-      backdrop-filter: blur(8px);
+      background: rgba(12, 19, 34, 0.86);
       border: 1px solid rgba(148, 163, 184, 0.22);
       border-left: 3px solid #ef4444;
       padding: 6px 12px;
@@ -762,9 +808,8 @@
       left: 50%;
       transform: translate(-50%, -50%);
       width: min(94vw, 600px);
-      background: rgba(15, 23, 42, 0.9);
+      background: rgba(12, 19, 34, 0.94);
       border: 1px solid rgba(148, 163, 184, 0.35);
-      backdrop-filter: blur(14px);
       border-radius: 12px;
       padding: 18px 20px;
       z-index: 16;
@@ -1332,6 +1377,10 @@
       transform: scale(0.95);
       background: linear-gradient(135deg, rgba(239, 68, 68, 0.92), rgba(249, 115, 22, 0.92));
     }
+    #btn-touch-fire.disabled {
+      opacity: 0.42;
+      filter: grayscale(0.5);
+    }
     #btn-touch-ads {
       width: 52px;
       height: 52px;
@@ -1476,16 +1525,157 @@
     body.touch-mode #hp-bar-bg {
       height: 7px;
     }
+    body.low-quality #overlay,
+    body.low-quality #death-screen,
+    body.low-quality #victory-screen {
+      backdrop-filter: none;
+    }
+
+    /* 公開ルームブラウザ & 参加申請パネル */
+    #public-rooms-box {
+      margin-top: 14px;
+      background: rgba(15, 23, 42, 0.52);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-align: left;
+    }
+    .public-rooms-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .public-rooms-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #38bdf8;
+      letter-spacing: 0.04em;
+    }
+    #public-rooms-status {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-left: 6px;
+    }
+    #public-rooms-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 156px;
+      overflow-y: auto;
+    }
+    .rooms-empty {
+      font-size: 12px;
+      color: #94a3b8;
+      padding: 10px 6px;
+      text-align: center;
+      border: 1px dashed rgba(148, 163, 184, 0.22);
+      border-radius: 8px;
+    }
+    .room-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    .room-card-info {
+      min-width: 0;
+      flex: 1;
+    }
+    .room-card-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .room-card-meta {
+      font-size: 11px;
+      color: #cbd5e1;
+      margin-top: 2px;
+    }
+    .room-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .room-badge.request {
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid rgba(245, 158, 11, 0.55);
+      color: #fbbf24;
+    }
+    .room-badge.open {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.55);
+      color: #34d399;
+    }
+    .room-join-btn {
+      width: auto;
+      padding: 6px 12px;
+      font-size: 12px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    #join-request-panel {
+      position: fixed;
+      top: max(54px, calc(env(safe-area-inset-top) + 46px));
+      right: max(14px, env(safe-area-inset-right));
+      z-index: 26;
+      width: min(92vw, 310px);
+      background: rgba(12, 19, 34, 0.96);
+      border: 1px solid rgba(245, 158, 11, 0.65);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: none;
+    }
+    .join-req-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #fbbf24;
+      margin-bottom: 4px;
+    }
+    #join-req-desc {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 10px;
+    }
+    .join-req-actions {
+      display: flex;
+      gap: 8px;
+    }
+
     body.touch-mode #ammo-hud {
       pointer-events: auto;
       z-index: 12;
-      padding: 6px 8px;
+      padding: 5px 7px;
+    }
+    body.touch-mode .ammo-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 6px;
     }
     body.touch-mode .weapon-header {
-      margin-bottom: 2px;
+      margin-bottom: 0;
+      min-width: 0;
     }
     body.touch-mode #weapon-name-hud {
       font-size: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     body.touch-mode #weapon-firemode-hud {
       display: none;
@@ -1494,19 +1684,22 @@
       display: none;
     }
     body.touch-mode #ammo-count {
-      font-size: 20px;
+      font-size: 18px;
     }
     body.touch-mode #ammo-max {
       font-size: 11px;
     }
     body.touch-mode #weapon-slots {
-      margin-top: 5px;
-      padding-top: 5px;
-      gap: 4px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin-top: 4px;
+      padding-top: 4px;
+      gap: 3px;
     }
     body.touch-mode .weapon-slot {
-      padding: 6px 3px;
-      font-size: 11px;
+      padding: 4px 2px;
+      font-size: 10px;
+      line-height: 1.15;
       cursor: pointer;
       touch-action: manipulation;
     }
@@ -1529,8 +1722,8 @@
         left: 50%;
         right: auto;
         transform: translateX(-50%);
-        min-width: 210px;
-        width: 210px;
+        min-width: 214px;
+        width: 214px;
       }
       body.touch-mode #hp-hud {
         bottom: calc(max(6px, env(safe-area-inset-bottom)) + 100px);
@@ -1541,6 +1734,11 @@
       body.touch-mode #heal-channel-box {
         bottom: 158px;
         width: 228px;
+      }
+      body.touch-mode #spawn-protect-box {
+        top: calc(max(8px, env(safe-area-inset-top)) + 84px);
+        width: 224px;
+        padding: 6px 10px;
       }
     }
 
@@ -1558,12 +1756,17 @@
         right: max(10px, env(safe-area-inset-right));
         left: auto;
         transform: none;
-        min-width: 172px;
-        width: 172px;
+        min-width: 184px;
+        width: 184px;
       }
       body.touch-mode #heal-channel-box {
         bottom: 298px;
         width: min(86vw, 250px);
+      }
+      body.touch-mode #spawn-protect-box {
+        top: calc(max(8px, env(safe-area-inset-top)) + 130px);
+        width: min(82vw, 246px);
+        padding: 6px 10px;
       }
     }
 
@@ -1590,6 +1793,7 @@
   <div id="damage-flash"></div>
   <div id="heal-flash"></div>
   <div id="low-hp-vignette"></div>
+  <div id="spawn-protect-vignette"></div>
 
   <!-- スナイパースコープ -->
   <div id="sniper-scope">
@@ -1630,9 +1834,20 @@
       <span>✚ MEDKIT 回復中 (+40 HP)</span>
       <span id="heal-channel-timer">5.0s</span>
     </div>
-    <div class="heal-channel-sub">移動・攻撃不可 (完了まで待機)</div>
+    <div class="heal-channel-sub">低速移動可・攻撃不可 (完了まで待機)</div>
     <div class="heal-channel-track">
       <div id="heal-channel-fill"></div>
+    </div>
+  </div>
+
+  <div id="spawn-protect-box">
+    <div class="spawn-protect-header">
+      <span>🛡️ リスポーン保護（無敵）</span>
+      <span id="spawn-protect-timer">3.0s</span>
+    </div>
+    <div class="spawn-protect-sub">移動可・攻撃不可 (安全地帯へ移動してください)</div>
+    <div class="spawn-protect-track">
+      <div id="spawn-protect-fill"></div>
     </div>
   </div>
 
@@ -1697,7 +1912,7 @@
         <div style="font-size: 13px; font-weight: 800; color: #34d399;">
           x<span id="medkit-count">2</span>
         </div>
-        <div class="ability-sub">5s動けず +40HP</div>
+        <div class="ability-sub">5s低速移動 +40HP</div>
       </div>
     </div>
 
@@ -1709,13 +1924,15 @@
 
   <!-- 右下武器＆残弾HUD -->
   <div id="ammo-hud" class="hud-box hud-fixed">
-    <div class="weapon-header">
-      <span id="weapon-name-hud">ASSAULT RIFLE</span>
-      <span id="weapon-firemode-hud">FULL-AUTO</span>
-    </div>
-    <div class="ammo-row">
-      <span id="ammo-count">30</span>
-      <span id="ammo-max">/ 30</span>
+    <div class="ammo-top-row">
+      <div class="weapon-header">
+        <span id="weapon-name-hud">ASSAULT RIFLE</span>
+        <span id="weapon-firemode-hud">FULL-AUTO</span>
+      </div>
+      <div class="ammo-row">
+        <span id="ammo-count">30</span>
+        <span id="ammo-max">/ 30</span>
+      </div>
     </div>
     <div id="reload-status"></div>
     <div id="reload-bar-bg"><div id="reload-bar-fill"></div></div>
@@ -1724,6 +1941,9 @@
       <div class="weapon-slot" data-weapon="smg"><span class="kbd">2</span> SMG</div>
       <div class="weapon-slot" data-weapon="shotgun"><span class="kbd">3</span> SG</div>
       <div class="weapon-slot" data-weapon="sniper"><span class="kbd">4</span> SR</div>
+      <div class="weapon-slot" data-weapon="dmr"><span class="kbd">5</span> DMR</div>
+      <div class="weapon-slot" data-weapon="lmg"><span class="kbd">6</span> LMG</div>
+      <div class="weapon-slot" data-weapon="revolver"><span class="kbd">7</span> HG</div>
     </div>
   </div>
 
@@ -1768,6 +1988,16 @@
     </div>
   </div>
 
+  <!-- ホスト用 参加申請通知パネル -->
+  <div id="join-request-panel">
+    <div class="join-req-title">🔔 参加申請が届きました</div>
+    <div id="join-req-desc">プレイヤーが参加を希望しています</div>
+    <div class="join-req-actions">
+      <button id="btn-approve-req" type="button" class="btn btn-success">許可 (Y)</button>
+      <button id="btn-reject-req" type="button" class="btn btn-secondary">拒否 (N)</button>
+    </div>
+  </div>
+
   <!-- スマホ用マルチタッチ操作パッド -->
   <div id="touch-controls">
     <div id="touch-look-zone"></div>
@@ -1802,7 +2032,7 @@
         <span><span class="kbd">Shift</span> スライド</span>
         <span><span class="kbd">左クリック</span> 射撃</span>
         <span><span class="kbd">右クリック</span> エイム(ADS)</span>
-        <span><span class="kbd">1-4 / ホイール</span> 武器</span>
+        <span><span class="kbd">1-7 / ホイール</span> 武器</span>
         <span><span class="kbd">R</span> リロード</span>
         <span><span class="kbd">E</span> 回復(5s)</span>
         <span><span class="kbd">Tab</span> 戦績</span>
@@ -1855,6 +2085,9 @@
                 <option value="arena">クラシックアリーナ（バランス型・中距離）</option>
                 <option value="warehouse">コンテナ倉庫（高台スロープ・スライド戦）</option>
                 <option value="cyber">サイバータワー（ネオン立体・高所戦）</option>
+                <option value="duel">タイマン決闘場（狭小・1v1向け）</option>
+                <option value="battlefield">大規模戦場（広大・大人数向け）</option>
+                <option value="vertical">スカイ要塞（3層高低差・立体戦）</option>
               </select>
             </div>
 
@@ -1865,6 +2098,15 @@
                 <option value="tdm">チームデスマッチ RED vs BLUE (20キル先取)</option>
                 <option value="sniper">スナイパー一撃戦 (SR固定・10キル先取)</option>
                 <option value="headshot">ヘッドショット限定戦 (頭のみ有効・10キル先取)</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="room-access-select">公開設定（マルチ作成時）</label>
+              <select id="room-access-select">
+                <option value="request" selected>公開・参加申請制 (一覧表示)</option>
+                <option value="open">公開・自由参加 (一覧表示)</option>
+                <option value="private">非公開 (コード招待のみ)</option>
               </select>
             </div>
 
@@ -1902,6 +2144,19 @@
             </div>
           </div>
         </div>
+
+        <div id="public-rooms-box">
+          <div class="public-rooms-header">
+            <div>
+              <span class="public-rooms-title">🌐 対戦中の公開ルーム</span>
+              <span id="public-rooms-status">検索中...</span>
+            </div>
+            <button id="refresh-rooms-btn" type="button" class="btn btn-secondary sound-btn">更新</button>
+          </div>
+          <div id="public-rooms-list">
+            <div class="rooms-empty">公開ルームを探しています...</div>
+          </div>
+        </div>
       </div>
 
       <div id="ready-section">
@@ -1923,6 +2178,9 @@
               <option value="arena">クラシックアリーナ</option>
               <option value="warehouse">コンテナ倉庫</option>
               <option value="cyber">サイバータワー</option>
+              <option value="duel">タイマン決闘場</option>
+              <option value="battlefield">大規模戦場</option>
+              <option value="vertical">スカイ要塞</option>
             </select>
             <select id="ingame-rule-select">
               <option value="ffa">デスマッチ (FFA)</option>
@@ -1971,9 +2229,14 @@
           <span class="setting-label">タッチ操作</span>
           <button id="touch-mode-toggle" type="button" class="btn btn-secondary sound-btn">OFF</button>
         </div>
+        <div class="setting-row">
+          <span class="setting-label">画質</span>
+          <button id="quality-toggle" type="button" class="btn btn-success sound-btn">軽量</button>
+        </div>
       </div>
 
       <div id="status-msg"></div>
+      <button id="cancel-join-btn" type="button" class="btn btn-secondary" style="display:none; margin-top:8px;">参加申請をキャンセル</button>
     </div>
   </div>
 

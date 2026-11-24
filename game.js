@@ -150,13 +150,185 @@ const MAPS = {
       { x: 0, y: 0, z: -13 },
       { x: 0, y: 0, z: 13 }
     ]
+  },
+
+  duel: {
+    id: 'duel',
+    name: 'タイマン決闘場',
+    size: 22,
+    wallH: 4.5,
+    bgColor: 0x10131d,
+    fogColor: 0x151b2b,
+    skyColors: ['#0d111a', '#1b263b', '#334155'],
+    floorType: 'arena',
+    ambientIntensity: 0.65,
+    sunColor: 0xfff5e4,
+    sunIntensity: 1.35,
+    rimColor: 0xf43f5e,
+    rimIntensity: 0.45,
+    obstacles: [
+      { x: 0, y: 2.25, z: -11, w: 22, h: 4.5, d: 1, color: 0x475569, matType: 'wallLong' },
+      { x: 0, y: 2.25, z: 11, w: 22, h: 4.5, d: 1, color: 0x475569, matType: 'wallLong' },
+      { x: -11, y: 2.25, z: 0, w: 1, h: 4.5, d: 22, color: 0x475569, matType: 'wallLong' },
+      { x: 11, y: 2.25, z: 0, w: 1, h: 4.5, d: 22, color: 0x475569, matType: 'wallLong' },
+      { x: 0, y: 1.6, z: 0, w: 2.4, h: 3.2, d: 2.4, color: 0x64748b, matType: 'metal' },
+      { x: -4.5, y: 0.7, z: 0, w: 1.4, h: 1.4, d: 3.6, color: 0xd97706, matType: 'hazard' },
+      { x: 4.5, y: 0.7, z: 0, w: 1.4, h: 1.4, d: 3.6, color: 0xd97706, matType: 'hazard' },
+      { x: 0, y: 0.65, z: -5.2, w: 4.0, h: 1.3, d: 1.2, color: 0x94a3b8, matType: 'concrete' },
+      { x: 0, y: 0.65, z: 5.2, w: 4.0, h: 1.3, d: 1.2, color: 0x94a3b8, matType: 'concrete' },
+      { x: -6.5, y: 0.85, z: -6.5, w: 1.8, h: 1.7, d: 1.8, color: 0xc29b61, matType: 'crate' },
+      { x: 6.5, y: 0.85, z: 6.5, w: 1.8, h: 1.7, d: 1.8, color: 0xc29b61, matType: 'crate' }
+    ],
+    spawns: [
+      { x: -8, y: 0, z: -8 },
+      { x: 8, y: 0, z: 8 },
+      { x: -8, y: 0, z: 8 },
+      { x: 8, y: 0, z: -8 },
+      { x: 0, y: 0, z: -8.5 },
+      { x: 0, y: 0, z: 8.5 }
+    ],
+    pickupSpawns: [
+      { x: -6.5, y: 0, z: 6.5 },
+      { x: 6.5, y: 0, z: -6.5 }
+    ]
+  },
+
+  battlefield: {
+    id: 'battlefield',
+    name: '大規模戦場',
+    size: 72,
+    wallH: 6,
+    bgColor: 0x11161b,
+    fogColor: 0x182028,
+    skyColors: ['#0f172a', '#243447', '#4a5568'],
+    floorType: 'warehouse',
+    ambientIntensity: 0.62,
+    sunColor: 0xffedd5,
+    sunIntensity: 1.35,
+    rimColor: 0x38bdf8,
+    rimIntensity: 0.42,
+    obstacles: [
+      { x: 0, y: 3, z: -36, w: 72, h: 6, d: 1, color: 0x475569, matType: 'wallLong' },
+      { x: 0, y: 3, z: 36, w: 72, h: 6, d: 1, color: 0x475569, matType: 'wallLong' },
+      { x: -36, y: 3, z: 0, w: 1, h: 6, d: 72, color: 0x475569, matType: 'wallLong' },
+      { x: 36, y: 3, z: 0, w: 1, h: 6, d: 72, color: 0x475569, matType: 'wallLong' },
+      { x: 0, y: 1.0, z: 0, w: 10, h: 2.0, d: 10, color: 0x64748b, matType: 'metal' },
+      { x: 0, y: 0.5, z: -6.7, w: 3.4, h: 1.0, d: 3.4, color: 0x94a3b8, matType: 'concrete' },
+      { x: 0, y: 0.5, z: 6.7, w: 3.4, h: 1.0, d: 3.4, color: 0x94a3b8, matType: 'concrete' },
+      { x: -6.7, y: 0.5, z: 0, w: 3.4, h: 1.0, d: 3.4, color: 0x94a3b8, matType: 'concrete' },
+      { x: 6.7, y: 0.5, z: 0, w: 3.4, h: 1.0, d: 3.4, color: 0x94a3b8, matType: 'concrete' },
+      { x: 0, y: 2.75, z: 0, w: 2.8, h: 1.5, d: 2.8, color: 0xd97706, matType: 'hazard' },
+      { x: -18, y: 1.6, z: -16, w: 4, h: 3.2, d: 11, color: 0x0f766e, matType: 'container' },
+      { x: 18, y: 1.6, z: 16, w: 4, h: 3.2, d: 11, color: 0x0f766e, matType: 'container' },
+      { x: -18, y: 1.6, z: 16, w: 4, h: 3.2, d: 11, color: 0xb45309, matType: 'container' },
+      { x: 18, y: 1.6, z: -16, w: 4, h: 3.2, d: 11, color: 0xb45309, matType: 'container' },
+      { x: -11, y: 0.85, z: -22, w: 5.5, h: 1.7, d: 1.6, color: 0x94a3b8, matType: 'concrete' },
+      { x: 11, y: 0.85, z: 22, w: 5.5, h: 1.7, d: 1.6, color: 0x94a3b8, matType: 'concrete' },
+      { x: 11, y: 0.85, z: -22, w: 5.5, h: 1.7, d: 1.6, color: 0x94a3b8, matType: 'concrete' },
+      { x: -11, y: 0.85, z: 22, w: 5.5, h: 1.7, d: 1.6, color: 0x94a3b8, matType: 'concrete' },
+      { x: -24, y: 0.9, z: 0, w: 3, h: 1.8, d: 6, color: 0xc29b61, matType: 'crate' },
+      { x: 24, y: 0.9, z: 0, w: 3, h: 1.8, d: 6, color: 0xc29b61, matType: 'crate' },
+      { x: 0, y: 1.4, z: -20, w: 6, h: 2.8, d: 2.4, color: 0x64748b, matType: 'metal' },
+      { x: 0, y: 1.4, z: 20, w: 6, h: 2.8, d: 2.4, color: 0x64748b, matType: 'metal' },
+      { x: -27, y: 1.2, z: -26, w: 3.5, h: 2.4, d: 3.5, color: 0xd97706, matType: 'hazard' },
+      { x: 27, y: 1.2, z: 26, w: 3.5, h: 2.4, d: 3.5, color: 0xd97706, matType: 'hazard' },
+      { x: -27, y: 1.2, z: 26, w: 3.5, h: 2.4, d: 3.5, color: 0xd97706, matType: 'hazard' },
+      { x: 27, y: 1.2, z: -26, w: 3.5, h: 2.4, d: 3.5, color: 0xd97706, matType: 'hazard' }
+    ],
+    spawns: [
+      { x: -31, y: 0, z: -31 },
+      { x: 31, y: 0, z: -31 },
+      { x: -31, y: 0, z: 31 },
+      { x: 31, y: 0, z: 31 },
+      { x: 0, y: 0, z: -31 },
+      { x: 0, y: 0, z: 31 },
+      { x: -31, y: 0, z: 0 },
+      { x: 31, y: 0, z: 0 },
+      { x: -12, y: 0, z: -13 },
+      { x: 12, y: 0, z: 13 },
+      { x: -12, y: 0, z: 13 },
+      { x: 12, y: 0, z: -13 }
+    ],
+    pickupSpawns: [
+      { x: 0, y: 2.0, z: 3.2 },
+      { x: 0, y: 2.0, z: -3.2 },
+      { x: -21, y: 0, z: 0 },
+      { x: 21, y: 0, z: 0 },
+      { x: 0, y: 0, z: -24 },
+      { x: 0, y: 0, z: 24 }
+    ]
+  },
+
+  vertical: {
+    id: 'vertical',
+    name: 'スカイ要塞',
+    size: 46,
+    wallH: 7.5,
+    bgColor: 0x091322,
+    fogColor: 0x0f1f36,
+    skyColors: ['#060d19', '#122b4a', '#264d73'],
+    floorType: 'arena',
+    ambientIntensity: 0.68,
+    sunColor: 0xe0f2fe,
+    sunIntensity: 1.35,
+    rimColor: 0x38bdf8,
+    rimIntensity: 0.55,
+    obstacles: [
+      { x: 0, y: 3.75, z: -23, w: 46, h: 7.5, d: 1, color: 0x334155, matType: 'wallLong' },
+      { x: 0, y: 3.75, z: 23, w: 46, h: 7.5, d: 1, color: 0x334155, matType: 'wallLong' },
+      { x: -23, y: 3.75, z: 0, w: 1, h: 7.5, d: 46, color: 0x334155, matType: 'wallLong' },
+      { x: 23, y: 3.75, z: 0, w: 1, h: 7.5, d: 46, color: 0x334155, matType: 'wallLong' },
+      // Tier 2 North & South Decks (top y=2.0) + Tier 1 side steps (top y=1.0)
+      { x: 0, y: 1.0, z: -13, w: 16, h: 2.0, d: 7, color: 0x64748b, matType: 'concrete' },
+      { x: -9.5, y: 0.5, z: -13, w: 3.2, h: 1.0, d: 4.5, color: 0xd97706, matType: 'hazard' },
+      { x: 9.5, y: 0.5, z: -13, w: 3.2, h: 1.0, d: 4.5, color: 0xd97706, matType: 'hazard' },
+      { x: 0, y: 1.0, z: 13, w: 16, h: 2.0, d: 7, color: 0x64748b, matType: 'concrete' },
+      { x: -9.5, y: 0.5, z: 13, w: 3.2, h: 1.0, d: 4.5, color: 0xd97706, matType: 'hazard' },
+      { x: 9.5, y: 0.5, z: 13, w: 3.2, h: 1.0, d: 4.5, color: 0xd97706, matType: 'hazard' },
+      // Tier 3 Central Bridge (top y=3.8, underside y=2.6 clear above ground) + 4 support pillars
+      { x: 0, y: 3.2, z: 0, w: 7, h: 1.2, d: 7, color: 0x475569, matType: 'metal' },
+      { x: -2.8, y: 1.3, z: -2.8, w: 1.1, h: 2.6, d: 1.1, color: 0x334155, matType: 'metal' },
+      { x: 2.8, y: 1.3, z: -2.8, w: 1.1, h: 2.6, d: 1.1, color: 0x334155, matType: 'metal' },
+      { x: -2.8, y: 1.3, z: 2.8, w: 1.1, h: 2.6, d: 1.1, color: 0x334155, matType: 'metal' },
+      { x: 2.8, y: 1.3, z: 2.8, w: 1.1, h: 2.6, d: 1.1, color: 0x334155, matType: 'metal' },
+      // N/S Sky Catwalk steps connecting Tier 2 (y=2.0) to Tier 3 (y=3.8) via y=2.9 (underside >=2.2m)
+      { x: 0, y: 2.55, z: -6.5, w: 3.4, h: 0.7, d: 6.2, color: 0x0891b2, matType: 'cyber' },
+      { x: 0, y: 2.55, z: 6.5, w: 3.4, h: 0.7, d: 6.2, color: 0x0891b2, matType: 'cyber' },
+      // East & West flank Tier 2 platforms (top y=2.0) + steps (y=1.0)
+      { x: -14, y: 1.0, z: 0, w: 6, h: 2.0, d: 10, color: 0x475569, matType: 'concrete' },
+      { x: 14, y: 1.0, z: 0, w: 6, h: 2.0, d: 10, color: 0x475569, matType: 'concrete' },
+      { x: -14, y: 0.5, z: -6.6, w: 3.4, h: 1.0, d: 3.2, color: 0xc29b61, matType: 'crate' },
+      { x: 14, y: 0.5, z: 6.6, w: 3.4, h: 1.0, d: 3.2, color: 0xc29b61, matType: 'crate' },
+      // Chest-high covers on Tier 2 and ground
+      { x: -4.2, y: 2.55, z: -13, w: 2.2, h: 1.1, d: 1.2, color: 0x94a3b8, matType: 'concrete' },
+      { x: 4.2, y: 2.55, z: 13, w: 2.2, h: 1.1, d: 1.2, color: 0x94a3b8, matType: 'concrete' }
+    ],
+    spawns: [
+      { x: -18, y: 0, z: -18 },
+      { x: 18, y: 0, z: -18 },
+      { x: -18, y: 0, z: 18 },
+      { x: 18, y: 0, z: 18 },
+      { x: 0, y: 0, z: -19 },
+      { x: 0, y: 0, z: 19 },
+      { x: -19, y: 0, z: 0 },
+      { x: 19, y: 0, z: 0 },
+      { x: 4.5, y: 2.0, z: -13 },
+      { x: -4.5, y: 2.0, z: 13 }
+    ],
+    pickupSpawns: [
+      { x: 0, y: 3.8, z: 0 },
+      { x: -5.5, y: 2.0, z: -13 },
+      { x: 5.5, y: 2.0, z: 13 },
+      { x: -14, y: 2.0, z: 0 },
+      { x: 14, y: 2.0, z: 0 }
+    ]
   }
 };
 
 // ==========================================
-// 武器定義（腰撃ち・移動・空中・反動パラメータ付き）
+// 武器定義（7種類：腰撃ち・移動・空中・反動パラメータ付き）
 // ==========================================
-const WEAPON_ORDER = ['ar', 'smg', 'shotgun', 'sniper'];
+const WEAPON_ORDER = ['ar', 'smg', 'shotgun', 'sniper', 'dmr', 'lmg', 'revolver'];
 const WEAPONS = {
   ar: {
     id: 'ar',
@@ -257,6 +429,81 @@ const WEAPONS = {
     moveMult: 0.94,
     tracerColor: 0xe879f9,
     scoped: true
+  },
+  dmr: {
+    id: 'dmr',
+    name: 'MARKSMAN DMR',
+    shortName: 'DMR',
+    auto: false,
+    bodyDmg: 42,
+    headDmg: 84,
+    mag: 12,
+    fireRateMs: 280,
+    reloadMs: 1600,
+    pellets: 1,
+    hipSpread: 0.048,
+    adsSpread: 0.001,
+    moveSpread: 0.036,
+    airSpread: 0.08,
+    bloomPerShot: 0.01,
+    maxBloom: 0.035,
+    recoilPitch: 0.018,
+    adsFov: 38,
+    adsSensMult: 0.48,
+    adsMoveMult: 0.62,
+    moveMult: 0.98,
+    tracerColor: 0x34d399,
+    scoped: false
+  },
+  lmg: {
+    id: 'lmg',
+    name: 'HEAVY LMG',
+    shortName: 'LMG',
+    auto: true,
+    bodyDmg: 22,
+    headDmg: 44,
+    mag: 75,
+    fireRateMs: 110,
+    reloadMs: 2600,
+    pellets: 1,
+    hipSpread: 0.058,
+    adsSpread: 0.012,
+    moveSpread: 0.045,
+    airSpread: 0.095,
+    bloomPerShot: 0.004,
+    maxBloom: 0.05,
+    recoilPitch: 0.011,
+    adsFov: 54,
+    adsSensMult: 0.6,
+    adsMoveMult: 0.52,
+    moveMult: 0.86,
+    tracerColor: 0xfb923c,
+    scoped: false
+  },
+  revolver: {
+    id: 'revolver',
+    name: 'MAGNUM HG',
+    shortName: 'HG',
+    auto: false,
+    bodyDmg: 48,
+    headDmg: 105,
+    mag: 6,
+    fireRateMs: 420,
+    reloadMs: 1450,
+    pellets: 1,
+    hipSpread: 0.03,
+    adsSpread: 0.002,
+    moveSpread: 0.018,
+    airSpread: 0.055,
+    bloomPerShot: 0.016,
+    maxBloom: 0.038,
+    recoilPitch: 0.026,
+    adsFov: 60,
+    adsSensMult: 0.72,
+    adsMoveMult: 0.82,
+    moveMult: 1.12,
+    tracerColor: 0xf43f5e,
+    scoped: false
   }
 };
 
@@ -367,6 +614,7 @@ const BOT_NAMES = ['Alpha', 'Bravo', 'Viper', 'Nova', 'Ghost', 'Titan', 'Echo'];
 const BOT_STYLE_LIST = ['trooper', 'cyber', 'ninja'];
 
 const MQTT_TOPIC_PREFIX = 'yashio-fps3d-v2/rooms/';
+const MQTT_LOBBY_TOPIC = 'yashio-fps3d-v2/lobby/rooms';
 const MQTT_BROKERS = [
   {
     code: '1',
@@ -416,6 +664,7 @@ const INITIAL_MEDKITS = 2;
 const MAX_MEDKITS = 3;
 const PICKUP_RESPAWN_MS = 15000;
 const RESPAWN_SECONDS = 3;
+const SPAWN_PROTECT_MS = 3000;
 const MATCH_RESTART_SECONDS = 5;
 
 let currentMapId = 'arena';
@@ -436,6 +685,68 @@ function getRandomSpawn(mapId = currentMapId) {
   const map = MAPS[mapId] || MAPS.arena;
   const sp = map.spawns[Math.floor(Math.random() * map.spawns.length)];
   return { x: sp.x, y: sp.y, z: sp.z };
+}
+
+function getSafestSpawn(mapId = currentMapId, forPlayerId = null, forTeam = null) {
+  const map = MAPS[mapId] || MAPS.arena;
+  const spawns = map.spawns || [];
+  if (spawns.length === 0) return { x: 0, y: 0, z: 0 };
+
+  const rule = getCurrentRule();
+  const hasOthers = Object.keys(hostPlayers).some((id) => id !== forPlayerId && hostPlayers[id].alive);
+  if (!hasOthers) {
+    return getRandomSpawn(mapId);
+  }
+
+  let bestSpawn = spawns[0];
+  let bestScore = -Infinity;
+
+  for (const sp of spawns) {
+    let minEnemyDist = Infinity;
+    let minAnyDist = Infinity;
+    let exposed = false;
+    const spTarget = { x: sp.x, y: sp.y + 1.35, z: sp.z };
+
+    for (const id in hostPlayers) {
+      if (id === forPlayerId) continue;
+      const other = hostPlayers[id];
+      if (!other.alive) continue;
+
+      const d = Math.hypot(other.x - sp.x, other.y - sp.y, other.z - sp.z);
+      if (d < minAnyDist) minAnyDist = d;
+
+      const isAlly = rule.teamMode && forTeam && other.team === forTeam;
+      if (isAlly) continue;
+
+      if (d < minEnemyDist) minEnemyDist = d;
+      if (!exposed) {
+        const enemyEye = {
+          x: other.x,
+          y: other.y + (other.sliding ? SLIDE_EYE_HEIGHT : other.crouching ? CROUCH_EYE_HEIGHT : EYE_HEIGHT),
+          z: other.z
+        };
+        if (hasLineOfSight(enemyEye, spTarget, map)) {
+          exposed = true;
+        }
+      }
+    }
+
+    if (!Number.isFinite(minEnemyDist)) minEnemyDist = 45;
+    if (!Number.isFinite(minAnyDist)) minAnyDist = 10;
+
+    const score =
+      (exposed ? 0 : 1000) +
+      Math.min(minEnemyDist, 45) * 10 +
+      Math.min(minAnyDist, 10) * 3 +
+      Math.random() * 12;
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestSpawn = sp;
+    }
+  }
+
+  return { x: bestSpawn.x, y: bestSpawn.y, z: bestSpawn.z };
 }
 
 function generateRoomCode(brokerCode = '1') {
@@ -531,49 +842,27 @@ const SoundFX = {
     const ctx = ensureAudio();
     if (!ctx) return;
     const now = ctx.currentTime;
+    const presets = {
+      sniper: { type: 'sawtooth', f0: 140, f1: 32, ramp: 0.18, gain: 0.28, dur: 0.2 },
+      shotgun: { type: 'square', f0: 115, f1: 28, ramp: 0.14, gain: 0.26, dur: 0.16 },
+      smg: { type: 'sawtooth', f0: 270, f1: 75, ramp: 0.055, gain: 0.14, dur: 0.06 },
+      dmr: { type: 'sawtooth', f0: 165, f1: 38, ramp: 0.13, gain: 0.23, dur: 0.14 },
+      lmg: { type: 'square', f0: 155, f1: 42, ramp: 0.09, gain: 0.2, dur: 0.1 },
+      revolver: { type: 'triangle', f0: 220, f1: 45, ramp: 0.14, gain: 0.26, dur: 0.16 },
+      ar: { type: 'sawtooth', f0: 190, f1: 48, ramp: 0.08, gain: 0.18, dur: 0.09 }
+    };
+    const cfg = presets[weaponId] || presets.ar;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
-    if (weaponId === 'sniper') {
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(140, now);
-      osc.frequency.exponentialRampToValueAtTime(32, now + 0.18);
-      gain.gain.setValueAtTime(0.28, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.2);
-    } else if (weaponId === 'shotgun') {
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(115, now);
-      osc.frequency.exponentialRampToValueAtTime(28, now + 0.14);
-      gain.gain.setValueAtTime(0.26, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.16);
-    } else if (weaponId === 'smg') {
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(270, now);
-      osc.frequency.exponentialRampToValueAtTime(75, now + 0.055);
-      gain.gain.setValueAtTime(0.14, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.06);
-    } else {
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(190, now);
-      osc.frequency.exponentialRampToValueAtTime(48, now + 0.08);
-      gain.gain.setValueAtTime(0.18, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.09);
-    }
+    osc.type = cfg.type;
+    osc.frequency.setValueAtTime(cfg.f0, now);
+    osc.frequency.exponentialRampToValueAtTime(cfg.f1, now + cfg.ramp);
+    gain.gain.setValueAtTime(cfg.gain, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + cfg.dur);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + cfg.dur);
   },
   reloadOut() {
     const ctx = ensureAudio();
@@ -751,12 +1040,20 @@ const avatarStyleList = document.getElementById('avatar-style-list');
 const avatarColorList = document.getElementById('avatar-color-list');
 const mapSelect = document.getElementById('map-select');
 const ruleSelect = document.getElementById('rule-select');
+const roomAccessSelect = document.getElementById('room-access-select');
 const botDifficultySelect = document.getElementById('bot-difficulty-select');
 const botCountSelect = document.getElementById('bot-count-select');
 const startBotBtn = document.getElementById('start-bot-btn');
 const createRoomBtn = document.getElementById('create-room-btn');
 const roomCodeInput = document.getElementById('room-code-input');
 const joinRoomBtn = document.getElementById('join-room-btn');
+const publicRoomsStatus = document.getElementById('public-rooms-status');
+const refreshRoomsBtn = document.getElementById('refresh-rooms-btn');
+const publicRoomsList = document.getElementById('public-rooms-list');
+const joinRequestPanel = document.getElementById('join-request-panel');
+const joinReqDesc = document.getElementById('join-req-desc');
+const btnApproveReq = document.getElementById('btn-approve-req');
+const btnRejectReq = document.getElementById('btn-reject-req');
 const inviteBox = document.getElementById('invite-box');
 const roomCodeDisplay = document.getElementById('room-code-display');
 const copyInviteBtn = document.getElementById('copy-invite-btn');
@@ -771,11 +1068,13 @@ const applyMapBtn = document.getElementById('apply-map-btn');
 const playBtn = document.getElementById('play-btn');
 const backToLobbyBtn = document.getElementById('back-to-lobby-btn');
 const statusMsg = document.getElementById('status-msg');
+const cancelJoinBtn = document.getElementById('cancel-join-btn');
 
 const sensSlider = document.getElementById('sens-slider');
 const sensVal = document.getElementById('sens-val');
 const soundToggle = document.getElementById('sound-toggle');
 const touchModeToggle = document.getElementById('touch-mode-toggle');
+const qualityToggle = document.getElementById('quality-toggle');
 
 const touchLookZone = document.getElementById('touch-look-zone');
 const touchMoveZone = document.getElementById('touch-move-zone');
@@ -797,6 +1096,7 @@ const weaponSlotsContainer = document.getElementById('weapon-slots');
 const damageFlash = document.getElementById('damage-flash');
 const healFlash = document.getElementById('heal-flash');
 const lowHpVignette = document.getElementById('low-hp-vignette');
+const spawnProtectVignette = document.getElementById('spawn-protect-vignette');
 const sniperScope = document.getElementById('sniper-scope');
 const damageIndicator = document.getElementById('damage-indicator');
 const crosshair = document.getElementById('crosshair');
@@ -810,6 +1110,10 @@ const hudToast = document.getElementById('hud-toast');
 const healChannelBox = document.getElementById('heal-channel-box');
 const healChannelTimer = document.getElementById('heal-channel-timer');
 const healChannelFill = document.getElementById('heal-channel-fill');
+
+const spawnProtectBox = document.getElementById('spawn-protect-box');
+const spawnProtectTimer = document.getElementById('spawn-protect-timer');
+const spawnProtectFill = document.getElementById('spawn-protect-fill');
 
 const matchRuleBadge = document.getElementById('match-rule-badge');
 const matchScoreDisplay = document.getElementById('match-score-display');
@@ -944,6 +1248,15 @@ touchModeToggle.addEventListener('click', () => {
   applyTouchModeUI();
 });
 
+let graphicsQuality = localStorage.getItem('fps_graphics_quality') === 'high' ? 'high' : 'low';
+function updateQualityToggleBtn() {
+  const isLow = graphicsQuality === 'low';
+  document.body.classList.toggle('low-quality', isLow);
+  qualityToggle.textContent = isLow ? '軽量' : '高画質';
+  qualityToggle.className = `btn sound-btn ${isLow ? 'btn-success' : 'btn-primary'}`;
+}
+updateQualityToggleBtn();
+
 if (savedTouchPref === null) {
   window.addEventListener('touchstart', () => {
     if (!touchControlsEnabled) {
@@ -997,18 +1310,20 @@ function spawnDamagePopup(text, variant = '') {
 }
 
 // ==========================================
-// プロシージャルPBRテクスチャファクトリ（キャッシュ済）
+// プロシージャルPBRテクスチャファクトリ（128x128軽量キャッシュ）
 // ==========================================
 function makeCanvasTexPair(drawFn, repeatX = 1, repeatY = 1) {
   const cMap = document.createElement('canvas');
-  cMap.width = 256;
-  cMap.height = 256;
+  cMap.width = 128;
+  cMap.height = 128;
   const ctxMap = cMap.getContext('2d');
+  ctxMap.scale(0.5, 0.5);
 
   const cBump = document.createElement('canvas');
-  cBump.width = 256;
-  cBump.height = 256;
+  cBump.width = 128;
+  cBump.height = 128;
   const ctxBump = cBump.getContext('2d');
+  ctxBump.scale(0.5, 0.5);
 
   drawFn(ctxMap, ctxBump);
 
@@ -1250,14 +1565,16 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0b1220);
 scene.fog = new THREE.Fog(0x0f172a, 18, 68);
 
-const camera = new THREE.PerspectiveCamera(BASE_FOV, window.innerWidth / window.innerHeight, 0.1, 160);
+const camera = new THREE.PerspectiveCamera(BASE_FOV, window.innerWidth / window.innerHeight, 0.1, 220);
 camera.rotation.order = 'YXZ';
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({
+  antialias: !isTouchDevice,
+  powerPreference: 'high-performance'
+});
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isTouchDevice ? 1.5 : 2));
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.enabled = graphicsQuality === 'high';
+renderer.shadowMap.type = THREE.PCFShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.12;
 document.body.appendChild(renderer.domElement);
@@ -1267,13 +1584,30 @@ scene.add(hemiLight);
 
 const dirLight = new THREE.DirectionalLight(0xfff5e4, 1.35);
 dirLight.position.set(18, 34, 14);
-dirLight.castShadow = true;
-const shadowSize = isTouchDevice ? 1024 : 2048;
-dirLight.shadow.mapSize.set(shadowSize, shadowSize);
+dirLight.castShadow = graphicsQuality === 'high';
+dirLight.shadow.mapSize.set(1024, 1024);
 dirLight.shadow.camera.near = 1;
-dirLight.shadow.camera.far = 95;
+dirLight.shadow.camera.far = 135;
 dirLight.shadow.bias = -0.0005;
 scene.add(dirLight);
+
+function applyGraphicsQuality(rebuildMap = false) {
+  const isLow = graphicsQuality === 'low';
+  updateQualityToggleBtn();
+  const maxDpr = isLow ? 1.0 : isTouchDevice ? 1.25 : 1.5;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, maxDpr));
+  renderer.shadowMap.enabled = !isLow;
+  dirLight.castShadow = !isLow;
+  if (rebuildMap) {
+    loadMap(currentMapId);
+  }
+}
+
+qualityToggle.addEventListener('click', () => {
+  graphicsQuality = graphicsQuality === 'low' ? 'high' : 'low';
+  localStorage.setItem('fps_graphics_quality', graphicsQuality);
+  applyGraphicsQuality(true);
+});
 
 const rimLight = new THREE.DirectionalLight(0x60a5fa, 0.45);
 rimLight.position.set(-18, 16, -20);
@@ -1305,6 +1639,7 @@ function disposeGroup(group) {
     const child = group.children[0];
     group.remove(child);
     child.traverse((obj) => {
+      if (obj.userData?.sharedAsset) return;
       if (obj.geometry) obj.geometry.dispose();
       if (obj.material) {
         if (Array.isArray(obj.material)) obj.material.forEach((m) => m.dispose());
@@ -1410,6 +1745,85 @@ function buildWeaponGeometryGroup(weaponId, scale = 1.0) {
 
     g.add(body, stock, barrel, muzzleBrake, grip, scope, lens, magMesh, boltMesh);
     muzzlePos.set(0, 0.03, -0.98);
+  } else if (weaponId === 'dmr') {
+    const body = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.092, 0.52), gunMetal);
+    const handguard = new THREE.Mesh(new THREE.BoxGeometry(0.082, 0.078, 0.3), darkMetal);
+    handguard.position.set(0, 0.012, -0.34);
+    const barrel = new THREE.Mesh(new THREE.BoxGeometry(0.036, 0.036, 0.44), darkMetal);
+    barrel.position.set(0, 0.024, -0.62);
+    const stock = new THREE.Mesh(new THREE.BoxGeometry(0.068, 0.115, 0.28), polymer);
+    stock.position.set(0, -0.02, 0.34);
+    const grip = new THREE.Mesh(new THREE.BoxGeometry(0.058, 0.135, 0.072), polymer);
+    grip.position.set(0, -0.11, 0.13);
+    grip.rotation.x = 0.22;
+    const acog = new THREE.Mesh(new THREE.BoxGeometry(0.058, 0.06, 0.24), darkMetal);
+    acog.position.set(0, 0.105, -0.04);
+    const emeraldSight = new THREE.Mesh(
+      new THREE.BoxGeometry(0.04, 0.038, 0.02),
+      new THREE.MeshBasicMaterial({ color: 0x34d399 })
+    );
+    emeraldSight.position.set(0, 0.105, -0.16);
+
+    magMesh = new THREE.Mesh(new THREE.BoxGeometry(0.048, 0.13, 0.095), darkMetal);
+    magMesh.position.set(0, -0.11, -0.06);
+
+    boltMesh = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.022, 0.075), new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9, roughness: 0.2 }));
+    boltMesh.position.set(0.052, 0.022, -0.02);
+
+    g.add(body, handguard, barrel, stock, grip, acog, emeraldSight, magMesh, boltMesh);
+    muzzlePos.set(0, 0.024, -0.85);
+  } else if (weaponId === 'lmg') {
+    const receiver = new THREE.Mesh(new THREE.BoxGeometry(0.128, 0.115, 0.5), gunMetal);
+    const shroud = new THREE.Mesh(new THREE.BoxGeometry(0.092, 0.092, 0.34), darkMetal);
+    shroud.position.set(0, 0.015, -0.36);
+    const barrel = new THREE.Mesh(new THREE.BoxGeometry(0.042, 0.042, 0.36), darkMetal);
+    barrel.position.set(0, 0.02, -0.62);
+    const carryHandle = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.055, 0.2), darkMetal);
+    carryHandle.position.set(0, 0.09, -0.12);
+    const stock = new THREE.Mesh(new THREE.BoxGeometry(0.088, 0.12, 0.26), polymer);
+    stock.position.set(0, -0.015, 0.35);
+    const grip = new THREE.Mesh(new THREE.BoxGeometry(0.062, 0.14, 0.078), polymer);
+    grip.position.set(0, -0.12, 0.14);
+    grip.rotation.x = 0.2;
+
+    magMesh = new THREE.Mesh(
+      new THREE.BoxGeometry(0.145, 0.15, 0.135),
+      new THREE.MeshStandardMaterial({ color: 0x166534, roughness: 0.55, metalness: 0.25 })
+    );
+    magMesh.position.set(0, -0.135, -0.08);
+
+    boltMesh = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.026, 0.22), darkMetal);
+    boltMesh.position.set(0, 0.072, 0.02);
+
+    g.add(receiver, shroud, barrel, carryHandle, stock, grip, magMesh, boltMesh);
+    muzzlePos.set(0, 0.02, -0.82);
+  } else if (weaponId === 'revolver') {
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.062, 0.07, 0.28), gunMetal);
+    const barrel = new THREE.Mesh(new THREE.BoxGeometry(0.048, 0.068, 0.28), darkMetal);
+    barrel.position.set(0, 0.024, -0.22);
+    const underlug = new THREE.Mesh(new THREE.BoxGeometry(0.036, 0.034, 0.22), gunMetal);
+    underlug.position.set(0, -0.012, -0.19);
+    const grip = new THREE.Mesh(
+      new THREE.BoxGeometry(0.056, 0.15, 0.08),
+      new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.72 })
+    );
+    grip.position.set(0, -0.105, 0.1);
+    grip.rotation.x = 0.3;
+    const frontSight = new THREE.Mesh(
+      new THREE.BoxGeometry(0.014, 0.022, 0.024),
+      new THREE.MeshBasicMaterial({ color: 0xf43f5e })
+    );
+    frontSight.position.set(0, 0.065, -0.33);
+
+    magMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.044, 0.044, 0.095, 10), darkMetal);
+    magMesh.rotation.x = Math.PI / 2;
+    magMesh.position.set(0, 0.018, -0.02);
+
+    boltMesh = new THREE.Mesh(new THREE.BoxGeometry(0.024, 0.032, 0.038), gunMetal);
+    boltMesh.position.set(0, 0.052, 0.11);
+
+    g.add(frame, barrel, underlug, grip, frontSight, magMesh, boltMesh);
+    muzzlePos.set(0, 0.024, -0.37);
   } else {
     // Assault Rifle
     const upper = new THREE.Mesh(new THREE.BoxGeometry(0.098, 0.082, 0.46), gunMetal);
@@ -1522,7 +1936,7 @@ function createSkyDome(map) {
 
   currentSkyTexture = new THREE.CanvasTexture(c);
   currentSkyTexture.colorSpace = THREE.SRGBColorSpace;
-  const skyGeo = new THREE.SphereGeometry(95, 24, 16);
+  const skyGeo = new THREE.SphereGeometry(150, 18, 12);
   const skyMat = new THREE.MeshBasicMaterial({ map: currentSkyTexture, side: THREE.BackSide, fog: false });
   const sky = new THREE.Mesh(skyGeo, skyMat);
   mapGroup.add(sky);
@@ -1530,19 +1944,24 @@ function createSkyDome(map) {
 
 function createPickupVisual(sp) {
   const group = new THREE.Group();
-  const baseMat = new THREE.MeshStandardMaterial({
-    color: 0xf8fafc,
-    emissive: 0x064e3b,
-    emissiveIntensity: 0.45,
-    roughness: 0.3,
-    metalness: 0.2
-  });
-  const crossMat = new THREE.MeshStandardMaterial({
-    color: 0x10b981,
-    emissive: 0x10b981,
-    emissiveIntensity: 0.8,
-    roughness: 0.25
-  });
+  const isLow = graphicsQuality === 'low';
+  const baseMat = isLow
+    ? new THREE.MeshLambertMaterial({ color: 0xf8fafc, emissive: 0x064e3b })
+    : new THREE.MeshStandardMaterial({
+        color: 0xf8fafc,
+        emissive: 0x064e3b,
+        emissiveIntensity: 0.45,
+        roughness: 0.3,
+        metalness: 0.2
+      });
+  const crossMat = isLow
+    ? new THREE.MeshLambertMaterial({ color: 0x10b981, emissive: 0x10b981 })
+    : new THREE.MeshStandardMaterial({
+        color: 0x10b981,
+        emissive: 0x10b981,
+        emissiveIntensity: 0.8,
+        roughness: 0.25
+      });
 
   const box = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.4, 0.55), baseMat);
   const crossH = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.43, 0.12), crossMat);
@@ -1555,8 +1974,11 @@ function createPickupVisual(sp) {
 
 function addMapArchitecturalProps(map) {
   const half = map.size / 2;
-  const wallH = map.id === 'arena' ? 5 : 6;
-  const trimMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.4, metalness: 0.75 });
+  const wallH = map.wallH || (map.id === 'arena' ? 5 : 6);
+  const trimMat =
+    graphicsQuality === 'low'
+      ? new THREE.MeshLambertMaterial({ color: 0x1e293b })
+      : new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.4, metalness: 0.75 });
 
   // 外周壁上部の金属トリム
   const trimN = new THREE.Mesh(new THREE.BoxGeometry(map.size + 1, 0.22, 1.2), trimMat);
@@ -1570,7 +1992,7 @@ function addMapArchitecturalProps(map) {
   mapGroup.add(trimN, trimS, trimW, trimE);
 
   // 4隅のライトポール（視覚演出）
-  const lanternColor = map.id === 'cyber' ? 0x22d3ee : map.id === 'warehouse' ? 0xf59e0b : 0x93c5fd;
+  const lanternColor = map.id === 'cyber' ? 0x22d3ee : map.id === 'warehouse' ? 0xf59e0b : map.id === 'duel' ? 0xf43f5e : 0x93c5fd;
   const lanternMat = new THREE.MeshBasicMaterial({ color: lanternColor });
   const poleOffsets = [
     [-half + 0.6, -half + 0.6],
@@ -1597,7 +2019,10 @@ function addMapArchitecturalProps(map) {
 
   // サイバーマップ外周の遠景モノリス群（非衝突）
   if (map.id === 'cyber') {
-    const monoMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.4, metalness: 0.5 });
+    const monoMat =
+      graphicsQuality === 'low'
+        ? new THREE.MeshLambertMaterial({ color: 0x0f172a })
+        : new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.4, metalness: 0.5 });
     const glowCyan = new THREE.MeshBasicMaterial({ color: 0x06b6d4 });
     const glowPink = new THREE.MeshBasicMaterial({ color: 0xd946ef });
     for (let i = 0; i < 12; i++) {
@@ -1618,13 +2043,14 @@ function addMapArchitecturalProps(map) {
 function loadMap(mapId) {
   const map = MAPS[mapId] || MAPS.arena;
   currentMapId = map.id;
+  const isLow = graphicsQuality === 'low';
 
   disposeGroup(mapGroup);
   pickupMeshes = [];
   bulletHoles.length = 0;
 
   scene.background = new THREE.Color(map.bgColor);
-  scene.fog = new THREE.Fog(map.fogColor, 18, map.size + 32);
+  scene.fog = new THREE.Fog(map.fogColor, 18, map.size + 42);
 
   hemiLight.intensity = map.ambientIntensity;
   dirLight.color.setHex(map.sunColor);
@@ -1643,34 +2069,44 @@ function loadMap(mapId) {
 
   const floorTex = TextureFactory.get(`floor_${map.floorType}`);
   const floorGeo = new THREE.PlaneGeometry(map.size, map.size);
-  const floorMat = new THREE.MeshStandardMaterial({
-    map: floorTex.map,
-    bumpMap: floorTex.bumpMap,
-    bumpScale: 0.04,
-    roughness: 0.85,
-    metalness: 0.08
-  });
+  const floorMat = isLow
+    ? new THREE.MeshLambertMaterial({ map: floorTex.map })
+    : new THREE.MeshStandardMaterial({
+        map: floorTex.map,
+        bumpMap: floorTex.bumpMap,
+        bumpScale: 0.04,
+        roughness: 0.85,
+        metalness: 0.08
+      });
   const floor = new THREE.Mesh(floorGeo, floorMat);
   floor.rotation.x = -Math.PI / 2;
-  floor.receiveShadow = true;
+  floor.receiveShadow = !isLow;
   mapGroup.add(floor);
 
+  const obsMatCache = {};
   for (const obs of map.obstacles) {
     const texKey = obs.matType || 'concrete';
-    const texPair = TextureFactory.get(texKey);
+    const cacheKey = `${texKey}_${obs.color}_${isLow ? 'L' : 'H'}`;
+    let mat = obsMatCache[cacheKey];
+    if (!mat) {
+      const texPair = TextureFactory.get(texKey);
+      mat = isLow
+        ? new THREE.MeshLambertMaterial({ color: obs.color, map: texPair.map })
+        : new THREE.MeshStandardMaterial({
+            color: obs.color,
+            map: texPair.map,
+            bumpMap: texPair.bumpMap,
+            bumpScale: texKey === 'container' ? 0.08 : 0.04,
+            roughness: texKey === 'metal' || texKey === 'container' ? 0.48 : 0.78,
+            metalness: texKey === 'metal' || texKey === 'container' ? 0.45 : texKey === 'cyber' ? 0.3 : 0.08
+          });
+      obsMatCache[cacheKey] = mat;
+    }
     const geo = new THREE.BoxGeometry(obs.w, obs.h, obs.d);
-    const mat = new THREE.MeshStandardMaterial({
-      color: obs.color,
-      map: texPair.map,
-      bumpMap: texPair.bumpMap,
-      bumpScale: texKey === 'container' ? 0.08 : 0.04,
-      roughness: texKey === 'metal' || texKey === 'container' ? 0.48 : 0.78,
-      metalness: texKey === 'metal' || texKey === 'container' ? 0.45 : texKey === 'cyber' ? 0.3 : 0.08
-    });
     const mesh = new THREE.Mesh(geo, mat);
     mesh.position.set(obs.x, obs.y, obs.z);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
+    mesh.castShadow = !isLow;
+    mesh.receiveShadow = !isLow;
     mapGroup.add(mesh);
   }
 
@@ -1685,6 +2121,7 @@ function loadMap(mapId) {
   ingameMapSelect.value = map.id;
 }
 
+applyGraphicsQuality(false);
 loadMap('arena');
 
 mapSelect.addEventListener('change', () => {
@@ -1701,17 +2138,26 @@ let currentRoomCode = '';
 let isConnected = false;
 let isHost = false;
 let isOfflineSolo = false;
+let roomAccessMode = 'request';
 let currentBotDifficulty = 'normal';
 let currentBotCount = 3;
 let lastHostTickAt = Date.now();
 let matchRestartTimer = null;
 let mqttClient = null;
+let lobbyMqttClient = null;
+let hostBrokerIndex = 0;
+let lobbyBrokerIndex = 0;
 let roomTopics = null;
 let guestJoinPending = false;
+let isJoinRequestPending = false;
 let joinTimeoutTimer = null;
 let joinRetryTimer = null;
+let roomAnnounceTimer = null;
+let lobbyPruneTimer = null;
 let lastSentMoveKey = '';
 let lastHeartbeatSent = 0;
+const discoveredRooms = new Map();
+const pendingJoinRequests = new Map();
 const hostPlayers = {};
 let hostPickups = [];
 let hostTickTimer = null;
@@ -1721,6 +2167,14 @@ const otherPlayers = {};
 const tracers = [];
 const impactParticles = [];
 const shellCasings = [];
+
+function buildInitialAmmoMap() {
+  const map = {};
+  for (const id of WEAPON_ORDER) {
+    map[id] = WEAPONS[id].mag;
+  }
+  return map;
+}
 
 const playerState = {
   pos: new THREE.Vector3(0, 0, 12),
@@ -1733,7 +2187,7 @@ const playerState = {
   team: null,
   // 武器 & エイム (ADS) & リロード
   weaponId: 'ar',
-  weaponAmmo: { ar: 30, smg: 36, shotgun: 6, sniper: 5 },
+  weaponAmmo: buildInitialAmmoMap(),
   isAiming: false,
   adsBlend: 0,
   isFiring: false,
@@ -1763,7 +2217,8 @@ const playerState = {
   medkits: INITIAL_MEDKITS,
   isHealing: false,
   healEndTime: 0,
-  // 死亡カウントダウン
+  // 死亡・リスポーン保護カウントダウン
+  spawnProtectEndTime: 0,
   respawnEndTime: 0,
   respawnDuration: RESPAWN_SECONDS * 1000,
   // キルストリーク
@@ -1776,6 +2231,14 @@ const playerState = {
   dmgIndicatorTimer: 0,
   lastAttackerPos: null
 };
+
+function isLocalSpawnProtected(now = performance.now()) {
+  return playerState.alive && playerState.spawnProtectEndTime > now;
+}
+
+function isHostPlayerSpawnProtected(p, now = Date.now()) {
+  return Boolean(p && p.alive && (p.spawnProtectUntil || 0) > now);
+}
 
 function getActiveWeapon() {
   return WEAPONS[playerState.weaponId] || WEAPONS.ar;
@@ -1869,18 +2332,28 @@ function syncTouchButtonStates() {
   btnTouchCrouch.classList.toggle('active', Boolean(playerState.crouchToggle || playerState.isCrouching));
   btnTouchSlide.classList.toggle('cooldown', playerState.slideCooldown > 0 || playerState.isSliding);
   btnTouchFire.classList.toggle('firing', Boolean(playerState.isFiring));
+  btnTouchFire.classList.toggle('disabled', isLocalSpawnProtected() || playerState.isHealing || matchOver);
 }
 
+let lastPostureKey = '';
 function updatePostureUI() {
-  if (playerState.isSliding) {
-    postureBadge.textContent = 'SLIDE';
-    postureBadge.className = 'slide';
-  } else if (playerState.isCrouching) {
-    postureBadge.textContent = 'CROUCH';
-    postureBadge.className = 'crouch';
-  } else {
-    postureBadge.textContent = 'STAND';
-    postureBadge.className = '';
+  const nextKey = playerState.isSliding
+    ? 'slide'
+    : playerState.isCrouching
+      ? 'crouch'
+      : 'stand';
+  if (nextKey !== lastPostureKey) {
+    lastPostureKey = nextKey;
+    if (nextKey === 'slide') {
+      postureBadge.textContent = 'SLIDE';
+      postureBadge.className = 'slide';
+    } else if (nextKey === 'crouch') {
+      postureBadge.textContent = 'CROUCH';
+      postureBadge.className = 'crouch';
+    } else {
+      postureBadge.textContent = 'STAND';
+      postureBadge.className = '';
+    }
   }
   syncTouchButtonStates();
 }
@@ -1927,7 +2400,15 @@ function resetAllWeaponAmmo() {
   }
 }
 
-function resetLocalPlayerForSpawn(x, y, z, hp = 100, medkits = INITIAL_MEDKITS, team = playerState.team) {
+function resetLocalPlayerForSpawn(
+  x,
+  y,
+  z,
+  hp = 100,
+  medkits = INITIAL_MEDKITS,
+  team = playerState.team,
+  spawnProtectMs = SPAWN_PROTECT_MS
+) {
   playerState.pos.set(x, y, z);
   playerState.vel.set(0, 0, 0);
   resetAllWeaponAmmo();
@@ -1945,6 +2426,7 @@ function resetLocalPlayerForSpawn(x, y, z, hp = 100, medkits = INITIAL_MEDKITS, 
   playerState.fireBloom = 0;
   playerState.moveRatio = 0;
   playerState.medkits = medkits;
+  playerState.spawnProtectEndTime = spawnProtectMs > 0 ? performance.now() + spawnProtectMs : 0;
   playerState.respawnEndTime = 0;
   playerState.alive = true;
 
@@ -1960,6 +2442,8 @@ function resetLocalPlayerForSpawn(x, y, z, hp = 100, medkits = INITIAL_MEDKITS, 
   crosshair.style.opacity = '1';
   healChannelBox.style.display = 'none';
   deathScreen.style.display = 'none';
+  spawnProtectBox.style.display = spawnProtectMs > 0 ? 'block' : 'none';
+  spawnProtectVignette.style.display = spawnProtectMs > 0 ? 'block' : 'none';
   updatePostureUI();
   updateTeamBadgeUI(team);
   updateHpUI(hp);
@@ -2151,13 +2635,26 @@ function createPlayerMesh(pData) {
   healAura.position.y = 0.08;
   healAura.visible = false;
 
+  const shieldMesh = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.58, 0.58, 2.02, 16, 1, true),
+    new THREE.MeshBasicMaterial({
+      color: 0x38bdf8,
+      transparent: true,
+      opacity: 0.28,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    })
+  );
+  shieldMesh.position.y = 1.04;
+  shieldMesh.visible = Boolean(pData.spawnProtected);
+
   const { sprite: nameSprite, canvas: nameCanvas, texture: nameTexture } = createNameSprite(
     pData.name,
     pData.hp,
     pData.team
   );
 
-  group.add(bodyGroup, healAura, nameSprite);
+  group.add(bodyGroup, healAura, shieldMesh, nameSprite);
   group.position.set(pData.x, pData.y, pData.z);
   scene.add(group);
 
@@ -2170,6 +2667,7 @@ function createPlayerMesh(pData) {
     rightArmPivot,
     thirdPersonWeaponHolder,
     healAura,
+    shieldMesh,
     nameSprite,
     nameCanvas,
     nameTexture,
@@ -2200,7 +2698,7 @@ function drawMinimap() {
   const halfW = w / 2;
   const halfH = h / 2;
   const map = getCurrentMap();
-  const scale = 3.1; // 1m = 3.1px (約48m四方をカバー)
+  const scale = Math.max(1.75, Math.min(4.2, 124 / map.size)); // マップサイズに応じて自動縮尺
   const cosY = Math.cos(playerState.yaw);
   const sinY = Math.sin(playerState.yaw);
 
@@ -2304,7 +2802,7 @@ function renderScoreboard() {
     const tr = document.createElement('tr');
     if (p.id === myId) tr.className = 'me-row';
     const kd = p.deaths > 0 ? (p.kills / p.deaths).toFixed(2) : p.kills.toFixed(2);
-    const statusLabel = !p.alive ? 'DEAD' : p.healing ? 'HEALING' : 'ALIVE';
+    const statusLabel = !p.alive ? 'DEAD' : p.spawnProtected ? 'SHIELD' : p.healing ? 'HEALING' : 'ALIVE';
     const wShort = (WEAPONS[p.weaponId] || WEAPONS.ar).shortName;
     const dotColor = getCurrentRule().teamMode && p.team
       ? (p.team === 'red' ? '#ef4444' : '#3b82f6')
@@ -2378,6 +2876,10 @@ function clearJoinTimers() {
 
 function cleanupNetwork(sendLeaveNotice = true) {
   clearJoinTimers();
+  if (roomAnnounceTimer) {
+    clearInterval(roomAnnounceTimer);
+    roomAnnounceTimer = null;
+  }
   if (hostTickTimer) {
     clearInterval(hostTickTimer);
     hostTickTimer = null;
@@ -2386,6 +2888,7 @@ function cleanupNetwork(sendLeaveNotice = true) {
     try {
       if (sendLeaveNotice && mqttClient.connected && roomTopics) {
         if (isHost) {
+          publishRoomRemove();
           mqttClient.publish(roomTopics.state, JSON.stringify({ type: 'hostClosed' }), { qos: 0 });
         } else if (myId) {
           mqttClient.publish(
@@ -2400,13 +2903,254 @@ function cleanupNetwork(sendLeaveNotice = true) {
     } catch (_) {}
     mqttClient = null;
   }
+  pendingJoinRequests.clear();
+  if (typeof renderJoinRequestPanel === 'function') renderJoinRequestPanel();
+  if (cancelJoinBtn) cancelJoinBtn.style.display = 'none';
+  isJoinRequestPending = false;
   guestJoinPending = false;
   roomTopics = null;
 }
 
 window.addEventListener('beforeunload', () => {
   cleanupNetwork(true);
+  stopLobbyDiscovery();
 });
+
+// ==========================================
+// 公開ルーム検索 & 参加申請管理
+// ==========================================
+function publishRoomAnnounce() {
+  if (!isHost || isOfflineSolo || roomAccessMode === 'private' || !currentRoomCode) return;
+  if (!mqttClient || !mqttClient.connected) return;
+  const broker = MQTT_BROKERS[hostBrokerIndex] || MQTT_BROKERS[0];
+  let humans = 0;
+  for (const id in hostPlayers) {
+    if (!hostPlayers[id].isBot) humans++;
+  }
+  const payload = {
+    type: 'roomAnnounce',
+    code: currentRoomCode,
+    hostName: (hostPlayers[myId]?.name || nameInput.value.trim() || 'Player').slice(0, 16),
+    mapId: currentMapId,
+    ruleId: currentRuleId,
+    access: roomAccessMode,
+    players: Object.keys(hostPlayers).length,
+    humans,
+    bots: currentBotCount,
+    maxPlayers: 8,
+    brokerName: broker.name,
+    ts: Date.now()
+  };
+  try {
+    mqttClient.publish(MQTT_LOBBY_TOPIC, JSON.stringify(payload), { qos: 0 });
+  } catch (_) {}
+}
+
+function publishRoomRemove() {
+  if (!currentRoomCode || !mqttClient || !mqttClient.connected) return;
+  try {
+    mqttClient.publish(
+      MQTT_LOBBY_TOPIC,
+      JSON.stringify({ type: 'roomRemove', code: currentRoomCode, ts: Date.now() }),
+      { qos: 0 }
+    );
+  } catch (_) {}
+}
+
+function renderPublicRooms() {
+  if (!publicRoomsList) return;
+  const now = Date.now();
+  const activeRooms = [];
+  for (const [code, room] of discoveredRooms.entries()) {
+    if (now - room.seenAt > 10000) {
+      discoveredRooms.delete(code);
+      continue;
+    }
+    activeRooms.push(room);
+  }
+  activeRooms.sort((a, b) => b.humans - a.humans || b.seenAt - a.seenAt);
+
+  if (activeRooms.length === 0) {
+    publicRoomsList.innerHTML =
+      '<div class="public-rooms-empty">公開中の対戦ルームが見つかりません（ルーム作成後に自動表示）</div>';
+    return;
+  }
+
+  publicRoomsList.innerHTML = '';
+  for (const room of activeRooms) {
+    const mapName = (MAPS[room.mapId] || MAPS.arena).name;
+    const ruleName = (RULES[room.ruleId] || RULES.ffa).name;
+    const isFull = room.players >= (room.maxPlayers || 8);
+    const isReq = room.access !== 'open';
+
+    const row = document.createElement('div');
+    row.className = 'public-room-row';
+    row.innerHTML = `
+      <div class="public-room-meta">
+        <div class="public-room-top">
+          <span class="room-code-pill">${escapeHtml(room.code)}</span>
+          <span class="room-host-name">${escapeHtml(room.hostName)}</span>
+          <span class="room-badge ${isReq ? 'request' : 'open'}">${isReq ? '承認制' : '自由参加'}</span>
+        </div>
+        <div class="public-room-sub">${escapeHtml(mapName)} / ${escapeHtml(ruleName)} ・ ${room.players}/${room.maxPlayers || 8}人${room.bots > 0 ? ` (BOT ${room.bots})` : ''}</div>
+      </div>
+    `;
+    const btn = document.createElement('button');
+    btn.className = 'btn-join-req';
+    btn.type = 'button';
+    btn.disabled = isFull || guestJoinPending;
+    btn.textContent = isFull ? '満員' : isReq ? '参加申請' : '参加';
+    btn.addEventListener('click', () => {
+      roomCodeInput.value = room.code;
+      if (typeof joinRoomByCode === 'function') {
+        joinRoomByCode(room.code, isReq);
+      }
+    });
+    row.appendChild(btn);
+    publicRoomsList.appendChild(row);
+  }
+}
+
+function stopLobbyDiscovery() {
+  if (lobbyPruneTimer) {
+    clearInterval(lobbyPruneTimer);
+    lobbyPruneTimer = null;
+  }
+  if (lobbyMqttClient) {
+    try {
+      lobbyMqttClient.removeAllListeners();
+      lobbyMqttClient.end(true);
+    } catch (_) {}
+    lobbyMqttClient = null;
+  }
+}
+
+function startLobbyDiscovery() {
+  if (typeof mqtt === 'undefined' || overlay.style.display === 'none') return;
+  stopLobbyDiscovery();
+  const broker = MQTT_BROKERS[lobbyBrokerIndex] || MQTT_BROKERS[0];
+  if (publicRoomsStatus) {
+    publicRoomsStatus.textContent = `検索中 (${broker.name})...`;
+  }
+
+  const clientId = `fps_lobby_${Math.random().toString(36).slice(2, 10)}`;
+  let client = null;
+  try {
+    client = mqtt.connect(broker.url, {
+      ...broker.opts,
+      clientId,
+      clean: true,
+      protocolVersion: 4,
+      connectTimeout: 4500,
+      reconnectPeriod: 0
+    });
+  } catch (_) {
+    if (publicRoomsStatus) publicRoomsStatus.textContent = 'ルーム検索接続エラー';
+    return;
+  }
+  lobbyMqttClient = client;
+
+  client.on('connect', () => {
+    if (lobbyMqttClient !== client) return;
+    if (publicRoomsStatus) {
+      publicRoomsStatus.textContent = `公開ルーム一覧 (${broker.name})`;
+    }
+    client.subscribe(MQTT_LOBBY_TOPIC, { qos: 0 });
+  });
+
+  client.on('message', (topic, payloadBuf) => {
+    if (lobbyMqttClient !== client || topic !== MQTT_LOBBY_TOPIC) return;
+    let msg;
+    try {
+      msg = JSON.parse(payloadBuf.toString());
+    } catch (_) {
+      return;
+    }
+    if (!msg || !msg.code) return;
+    if (msg.type === 'roomAnnounce') {
+      discoveredRooms.set(String(msg.code), {
+        code: String(msg.code),
+        hostName: String(msg.hostName || 'Host').slice(0, 16),
+        mapId: MAPS[msg.mapId] ? msg.mapId : 'arena',
+        ruleId: RULES[msg.ruleId] ? msg.ruleId : 'ffa',
+        access: msg.access === 'open' ? 'open' : 'request',
+        players: Number(msg.players) || 1,
+        humans: Number(msg.humans) || 1,
+        bots: Number(msg.bots) || 0,
+        maxPlayers: Number(msg.maxPlayers) || 8,
+        seenAt: Date.now()
+      });
+      renderPublicRooms();
+    } else if (msg.type === 'roomRemove') {
+      discoveredRooms.delete(String(msg.code));
+      renderPublicRooms();
+    }
+  });
+
+  client.on('error', () => {
+    if (lobbyMqttClient !== client) return;
+    stopLobbyDiscovery();
+    lobbyBrokerIndex = (lobbyBrokerIndex + 1) % MQTT_BROKERS.length;
+    if (publicRoomsStatus) publicRoomsStatus.textContent = '別リレーで再接続中...';
+    setTimeout(() => {
+      if (!isConnected && !guestJoinPending && overlay.style.display !== 'none') {
+        startLobbyDiscovery();
+      }
+    }, 1800);
+  });
+
+  lobbyPruneTimer = setInterval(() => {
+    renderPublicRooms();
+  }, 2500);
+  renderPublicRooms();
+}
+
+function renderJoinRequestPanel() {
+  if (!joinRequestPanel) return;
+  if (!isHost || pendingJoinRequests.size === 0) {
+    joinRequestPanel.style.display = 'none';
+    return;
+  }
+  const firstEntry = pendingJoinRequests.entries().next().value;
+  if (!firstEntry) {
+    joinRequestPanel.style.display = 'none';
+    return;
+  }
+  const [, req] = firstEntry;
+  if (joinReqDesc) {
+    joinReqDesc.textContent = `${req.name} から参加申請 (待機 ${pendingJoinRequests.size}件) [Y承認 / N拒否]`;
+  }
+  joinRequestPanel.style.display = 'block';
+}
+
+function approveJoinRequest(reqId) {
+  if (!isHost || pendingJoinRequests.size === 0) return;
+  const targetId = reqId || pendingJoinRequests.keys().next().value;
+  const req = pendingJoinRequests.get(targetId);
+  if (!req) return;
+  pendingJoinRequests.delete(targetId);
+  renderJoinRequestPanel();
+  if (!hostPlayers[targetId]) {
+    hostAddPlayer(targetId, req.joinData);
+    publishRoomAnnounce();
+    showToast(`${req.name} の参加を承認しました`);
+    SoundFX.healComplete();
+  }
+}
+
+function rejectJoinRequest(reqId) {
+  if (!isHost || pendingJoinRequests.size === 0) return;
+  const targetId = reqId || pendingJoinRequests.keys().next().value;
+  const req = pendingJoinRequests.get(targetId);
+  if (!req) return;
+  pendingJoinRequests.delete(targetId);
+  renderJoinRequestPanel();
+  sendToPlayerFromHost(targetId, {
+    type: 'joinRejected',
+    reason: 'ホストに参加申請が拒否されました。'
+  });
+  showToast(`${req.name} の参加申請を拒否しました`);
+}
 
 function hasRemoteGuests() {
   for (const id in hostPlayers) {
@@ -2504,17 +3248,18 @@ function updateBotConfigUI() {
 }
 
 function hostAddPlayer(id, joinData = {}) {
-  const spawn = getRandomSpawn(currentMapId);
+  const rule = getCurrentRule();
+  const team = rule.teamMode ? assignTeamBalanced() : null;
+  const spawn = getSafestSpawn(currentMapId, id, team);
   const cleanName = String(joinData.name || '').trim().slice(0, 16) || `Player_${id.slice(-4)}`;
   const style = AVATAR_STYLES.has(joinData.avatarStyle) ? joinData.avatarStyle : 'trooper';
   const color = AVATAR_COLORS.includes(joinData.avatarColor)
     ? joinData.avatarColor
     : AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)];
-  const rule = getCurrentRule();
-  const team = rule.teamMode ? assignTeamBalanced() : null;
   const initialMedkits = rule.allowMedkits ? INITIAL_MEDKITS : 0;
   const isBot = Boolean(joinData.isBot);
   const weaponId = rule.lockedWeapon || (WEAPONS[joinData.weaponId] ? joinData.weaponId : 'ar');
+  const now = Date.now();
 
   hostPlayers[id] = {
     id,
@@ -2540,8 +3285,9 @@ function hostAddPlayer(id, joinData = {}) {
     reloading: false,
     healTimer: null,
     respawnTimer: null,
+    spawnProtectUntil: now + SPAWN_PROTECT_MS,
     medkits: initialMedkits,
-    lastSeen: Date.now()
+    lastSeen: now
   };
 
   if (!isBot) {
@@ -2555,6 +3301,7 @@ function hostAddPlayer(id, joinData = {}) {
         players: serializePlayersForNet()
       });
     }
+    publishRoomAnnounce();
   }
 }
 
@@ -2589,6 +3336,8 @@ function hostSyncBots(count = currentBotCount, difficulty = currentBotDifficulty
 }
 
 function sendPlayerInitToHostTarget(id) {
+  const p = hostPlayers[id];
+  const protectRemain = p ? Math.max(0, (p.spawnProtectUntil || 0) - Date.now()) : 0;
   sendToPlayerFromHost(id, {
     type: 'init',
     id,
@@ -2596,6 +3345,7 @@ function sendPlayerInitToHostTarget(id) {
     ruleId: currentRuleId,
     teamScores,
     matchOver,
+    spawnProtectMs: protectRemain,
     pickups: hostPickups.map((pk) => pk.active),
     players: serializePlayersForNet()
   });
@@ -2610,9 +3360,11 @@ function removeHostPlayer(id) {
   }
   delete hostPlayers[id];
   broadcastFromHost({ type: 'playerDisconnected', id });
+  publishRoomAnnounce();
 }
 
 function serializePlayersForNet() {
+  const now = Date.now();
   const out = {};
   for (const id in hostPlayers) {
     const p = hostPlayers[id];
@@ -2636,6 +3388,7 @@ function serializePlayersForNet() {
       sliding: p.sliding,
       healing: p.healing,
       reloading: p.reloading,
+      spawnProtected: p.alive && now < (p.spawnProtectUntil || 0),
       medkits: p.medkits
     };
   }
@@ -2660,6 +3413,7 @@ function hostResetMatch(
   matchOver = false;
   initHostPickups(currentMapId);
 
+  const now = Date.now();
   let idx = 0;
   for (const id in hostPlayers) {
     const p = hostPlayers[id];
@@ -2669,7 +3423,9 @@ function hostResetMatch(
       clearTimeout(p.respawnTimer);
       p.respawnTimer = null;
     }
-    const sp = getRandomSpawn(currentMapId);
+    const nextTeam = rule.teamMode ? (idx % 2 === 0 ? 'red' : 'blue') : null;
+    p.team = nextTeam;
+    const sp = getSafestSpawn(currentMapId, id, nextTeam);
     p.x = sp.x;
     p.y = sp.y;
     p.z = sp.z;
@@ -2680,19 +3436,21 @@ function hostResetMatch(
     p.crouching = false;
     p.sliding = false;
     p.reloading = false;
+    p.spawnProtectUntil = now + SPAWN_PROTECT_MS;
     p.medkits = rule.allowMedkits ? INITIAL_MEDKITS : 0;
     p.weaponId = rule.lockedWeapon || 'ar';
-    p.team = rule.teamMode ? (idx % 2 === 0 ? 'red' : 'blue') : null;
     idx++;
   }
 
   hostSyncBots(newBotCount, newBotDifficulty);
+  publishRoomAnnounce();
 
   broadcastFromHost({
     type: 'matchReset',
     mapId: currentMapId,
     ruleId: currentRuleId,
     teamScores,
+    spawnProtectMs: SPAWN_PROTECT_MS,
     pickups: hostPickups.map((pk) => pk.active),
     players: serializePlayersForNet()
   });
@@ -2723,12 +3481,46 @@ function handleHostReceive(senderId, msg) {
   if (!msg || typeof msg !== 'object') return;
   const p = hostPlayers[senderId];
 
-  if (msg.type === 'join') {
-    if (!p) {
-      hostAddPlayer(senderId, msg);
-    } else {
+  if (msg.type === 'join' || msg.type === 'joinRequest') {
+    if (p) {
       p.lastSeen = Date.now();
       sendPlayerInitToHostTarget(senderId);
+      return;
+    }
+    const maxPlayers = 8;
+    if (Object.keys(hostPlayers).length >= maxPlayers) {
+      sendToPlayerFromHost(senderId, {
+        type: 'joinRejected',
+        reason: 'ルームが満員です (最大8人)。'
+      });
+      return;
+    }
+    if (!isOfflineSolo && roomAccessMode === 'request' && senderId !== myId) {
+      const cleanReqName = String(msg.name || '').trim().slice(0, 16) || `Player_${senderId.slice(-4)}`;
+      if (!pendingJoinRequests.has(senderId)) {
+        pendingJoinRequests.set(senderId, {
+          id: senderId,
+          name: cleanReqName,
+          joinData: msg,
+          requestedAt: Date.now()
+        });
+        renderJoinRequestPanel();
+        showToast(`参加申請: ${cleanReqName} ([Y]承認 / [N]拒否)`);
+        SoundFX.pickup();
+      }
+      sendToPlayerFromHost(senderId, {
+        type: 'joinPending',
+        hostName: hostPlayers[myId]?.name || 'Host'
+      });
+      return;
+    }
+    hostAddPlayer(senderId, msg);
+    return;
+  }
+
+  if (msg.type === 'cancelJoinRequest') {
+    if (pendingJoinRequests.delete(senderId)) {
+      renderJoinRequestPanel();
     }
     return;
   }
@@ -2737,6 +3529,9 @@ function handleHostReceive(senderId, msg) {
   p.lastSeen = Date.now();
 
   if (msg.type === 'leave') {
+    if (pendingJoinRequests.delete(senderId)) {
+      renderJoinRequestPanel();
+    }
     if (senderId !== myId) {
       removeHostPlayer(senderId);
     }
@@ -2761,12 +3556,17 @@ function handleHostReceive(senderId, msg) {
     if (!p.alive) return;
     const map = getCurrentMap();
     const limit = map.size / 2 - 0.5;
-    if (!p.healing && !matchOver) {
+    if (!matchOver) {
       p.x = Math.max(-limit, Math.min(limit, Number(msg.x) || 0));
       p.y = Math.max(0, Math.min(25, Number(msg.y) || 0));
       p.z = Math.max(-limit, Math.min(limit, Number(msg.z) || 0));
-      p.sliding = Boolean(msg.sliding);
-      p.crouching = Boolean(msg.crouching);
+      if (p.healing) {
+        p.sliding = false;
+        p.crouching = false;
+      } else {
+        p.sliding = Boolean(msg.sliding);
+        p.crouching = Boolean(msg.crouching);
+      }
     } else {
       p.sliding = false;
       p.crouching = false;
@@ -2815,7 +3615,7 @@ function handleHostReceive(senderId, msg) {
   }
 
   if (msg.type === 'shoot') {
-    if (!p.alive || p.healing || matchOver || !msg.origin || !Array.isArray(msg.rays)) return;
+    if (!p.alive || p.healing || isHostPlayerSpawnProtected(p) || matchOver || !msg.origin || !Array.isArray(msg.rays)) return;
     const rule = getCurrentRule();
     const weapon = WEAPONS[rule.lockedWeapon || msg.weaponId] || WEAPONS.ar;
     const origin = msg.origin;
@@ -2893,7 +3693,11 @@ function handleHostReceive(senderId, msg) {
       if (hitPlayer) {
         let dmg = 0;
         let blockedBody = false;
-        if (rule.id === 'headshot' && !isHeadshot) {
+        let blockedSpawnProtect = false;
+        if (isHostPlayerSpawnProtected(hitPlayer)) {
+          dmg = 0;
+          blockedSpawnProtect = true;
+        } else if (rule.id === 'headshot' && !isHeadshot) {
           dmg = 0;
           blockedBody = true;
         } else if (rule.id === 'sniper') {
@@ -2907,11 +3711,13 @@ function handleHostReceive(senderId, msg) {
           totalDamage: 0,
           anyHeadshot: false,
           blockedBodyOnly: false,
+          blockedSpawnProtect: false,
           hitPos: endPoint
         };
         prev.totalDamage += dmg;
         prev.anyHeadshot = prev.anyHeadshot || isHeadshot;
         if (blockedBody) prev.blockedBodyOnly = true;
+        if (blockedSpawnProtect) prev.blockedSpawnProtect = true;
         hitsByTarget.set(hitPlayer.id, prev);
       }
     }
@@ -2927,7 +3733,9 @@ function handleHostReceive(senderId, msg) {
     for (const hitInfo of hitsByTarget.values()) {
       const target = hitInfo.target;
       if (hitInfo.totalDamage <= 0) {
-        if (hitInfo.blockedBodyOnly) {
+        if (hitInfo.blockedSpawnProtect) {
+          sendToPlayerFromHost(senderId, { type: 'spawnProtectedHit' });
+        } else if (hitInfo.blockedBodyOnly) {
           sendToPlayerFromHost(senderId, { type: 'bodyImmune' });
         }
         continue;
@@ -3007,7 +3815,7 @@ function handleHostReceive(senderId, msg) {
             const respTarget = hostPlayers[deadId];
             if (!respTarget || matchOver) return;
             respTarget.respawnTimer = null;
-            const sp = getRandomSpawn(currentMapId);
+            const sp = getSafestSpawn(currentMapId, deadId, respTarget.team);
             respTarget.x = sp.x;
             respTarget.y = sp.y;
             respTarget.z = sp.z;
@@ -3017,6 +3825,7 @@ function handleHostReceive(senderId, msg) {
             respTarget.sliding = false;
             respTarget.healing = false;
             respTarget.reloading = false;
+            respTarget.spawnProtectUntil = Date.now() + SPAWN_PROTECT_MS;
             respTarget.medkits = rule.allowMedkits ? INITIAL_MEDKITS : 0;
             if (respTarget.isBot) {
               respTarget.ai = createBotAIState(respTarget.weaponId);
@@ -3028,7 +3837,8 @@ function handleHostReceive(senderId, msg) {
               z: respTarget.z,
               hp: respTarget.hp,
               medkits: respTarget.medkits,
-              team: respTarget.team
+              team: respTarget.team,
+              spawnProtectMs: SPAWN_PROTECT_MS
             });
           }, RESPAWN_SECONDS * 1000);
         }
@@ -3110,6 +3920,23 @@ function updateBots(dt, now) {
     if (p.healing) {
       p.sliding = false;
       p.crouching = false;
+      const wpDist = ai.waypoint ? Math.hypot(ai.waypoint.x - p.x, ai.waypoint.z - p.z) : 0;
+      if (!ai.waypoint || now >= ai.waypointUntil || wpDist < 1.5) {
+        const sp = map.spawns[Math.floor(Math.random() * map.spawns.length)];
+        ai.waypoint = { x: sp.x, z: sp.z };
+        ai.waypointUntil = now + 2600 + Math.random() * 1800;
+      }
+      const dx = ai.waypoint.x - p.x;
+      const dz = ai.waypoint.z - p.z;
+      const d = Math.hypot(dx, dz);
+      if (d > 0.3) {
+        const healWalkSpd = MOVE_SPEED * diff.speedMult * weapon.moveMult * CROUCH_MOVE_MULT;
+        moveBotWithCollisions(p, (dx / d) * healWalkSpd * dt, (dz / d) * healWalkSpd * dt, PLAYER_HEIGHT, map);
+        const desiredYaw = Math.atan2(-dx, -dz);
+        const yawErr = normalizeAngleDiff(desiredYaw - p.yaw);
+        const maxTurn = diff.turnSpeed * 0.65 * dt;
+        p.yaw += Math.max(-maxTurn, Math.min(maxTurn, yawErr));
+      }
       ai.velY -= GRAVITY * dt;
       p.y += ai.velY * dt;
       const gy = getGroundHeight(p.x, p.y, p.z);
@@ -3145,18 +3972,19 @@ function updateBots(dt, now) {
         alertedEnemy = target;
       }
 
+      const targetProtected = isHostPlayerSpawnProtected(target, now);
       const tChest = {
         x: target.x,
         y: target.y + (target.sliding ? 0.65 : target.crouching ? 0.9 : 1.35),
         z: target.z
       };
-      if (d <= diff.detectRange && d < visDist && hasLineOfSight(botEye, tChest, map)) {
+      if (!targetProtected && d <= diff.detectRange && d < visDist && hasLineOfSight(botEye, tChest, map)) {
         visDist = d;
         visibleEnemy = target;
       }
     }
 
-    if (visibleEnemy) {
+    if (visibleEnemy && !isHostPlayerSpawnProtected(p, now)) {
       if (ai.targetId !== visibleEnemy.id) {
         ai.targetId = visibleEnemy.id;
         ai.seenSince = now;
@@ -3188,7 +4016,7 @@ function updateBots(dt, now) {
       p.sliding = false;
       const baseSpeed = MOVE_SPEED * diff.speedMult * weapon.moveMult;
 
-      if (visibleEnemy) {
+      if (visibleEnemy && !isHostPlayerSpawnProtected(p, now)) {
         if (now >= ai.strafeSwitchAt) {
           ai.strafeDir = Math.random() < 0.5 ? -1 : 1;
           ai.strafeSwitchAt = now + 700 + Math.random() * 1100;
@@ -3199,7 +4027,7 @@ function updateBots(dt, now) {
         p.crouching = diff.crouchChance > 0 && now < ai.crouchUntil;
 
         const prefRange =
-          weapon.id === 'shotgun' ? 6 : weapon.id === 'smg' ? 10 : weapon.id === 'sniper' ? 24 : 15;
+          { shotgun: 6, smg: 10, revolver: 12, lmg: 14, ar: 15, dmr: 20, sniper: 24 }[weapon.id] || 15;
         const dx = visibleEnemy.x - p.x;
         const dz = visibleEnemy.z - p.z;
         const hDist = Math.hypot(dx, dz) || 1;
@@ -3283,7 +4111,7 @@ function updateBots(dt, now) {
     const botHeight = p.sliding ? SLIDE_PLAYER_HEIGHT : p.crouching ? CROUCH_PLAYER_HEIGHT : PLAYER_HEIGHT;
     const blocked = moveBotWithCollisions(p, moveX * dt, moveZ * dt, botHeight, map);
     if (blocked) {
-      if (visibleEnemy) {
+      if (visibleEnemy && !isHostPlayerSpawnProtected(p, now)) {
         ai.strafeDir = -ai.strafeDir;
       } else {
         ai.stuckTicks += 1;
@@ -3313,7 +4141,7 @@ function updateBots(dt, now) {
       yawErr = normalizeAngleDiff(desiredYaw - p.yaw);
       const maxTurn = diff.turnSpeed * dt;
       p.yaw += Math.max(-maxTurn, Math.min(maxTurn, yawErr));
-      if (visibleEnemy) {
+      if (visibleEnemy && !isHostPlayerSpawnProtected(p, now)) {
         const aimDy = visibleEnemy.y + 1.3 - botEye.y;
         p.pitch = Math.max(-0.8, Math.min(0.8, Math.atan2(aimDy, Math.hypot(visibleEnemy.x - p.x, visibleEnemy.z - p.z) || 1)));
       } else {
@@ -3321,7 +4149,7 @@ function updateBots(dt, now) {
       }
     }
 
-    if (visibleEnemy) {
+    if (visibleEnemy && !isHostPlayerSpawnProtected(p, now)) {
       if (ai.ammo <= 0) {
         if (!p.reloading) {
           p.reloading = true;
@@ -3441,7 +4269,9 @@ function applyRemotePlayerVisualUpdates(p) {
       disposeGroup(existing.group);
       scene.remove(existing.group);
     }
-    otherPlayers[p.id] = createPlayerMesh(p);
+    const created = createPlayerMesh(p);
+    if (created.shieldMesh) created.shieldMesh.visible = p.alive && Boolean(p.spawnProtected);
+    otherPlayers[p.id] = created;
     return;
   }
 
@@ -3454,6 +4284,9 @@ function applyRemotePlayerVisualUpdates(p) {
   op.reloading = Boolean(p.reloading);
   op.group.visible = p.alive;
   op.healAura.visible = p.alive && op.healing;
+  if (op.shieldMesh) {
+    op.shieldMesh.visible = p.alive && Boolean(p.spawnProtected);
+  }
 
   if (op.weaponId !== p.weaponId && WEAPONS[p.weaponId]) {
     op.weaponId = p.weaponId;
@@ -3470,11 +4303,46 @@ function applyRemotePlayerVisualUpdates(p) {
 }
 
 function handleServerMessage(msg) {
+  if (msg.type === 'joinPending') {
+    if (!isHost && guestJoinPending) {
+      isJoinRequestPending = true;
+      clearJoinTimers();
+      if (cancelJoinBtn) cancelJoinBtn.style.display = 'inline-block';
+      setStatus(`参加申請を送信しました (${msg.hostName || 'Host'})。ホストの承認待ちです...`);
+      joinTimeoutTimer = setTimeout(() => {
+        if (guestJoinPending && !isConnected) {
+          cleanupNetwork(false);
+          startBotBtn.disabled = false;
+          createRoomBtn.disabled = false;
+          joinRoomBtn.disabled = false;
+          setStatus('参加申請がタイムアウトしました。再度お試しください。', true);
+          startLobbyDiscovery();
+        }
+      }, 30000);
+    }
+    return;
+  }
+
+  if (msg.type === 'joinRejected') {
+    if (!isHost && guestJoinPending) {
+      cleanupNetwork(false);
+      startBotBtn.disabled = false;
+      createRoomBtn.disabled = false;
+      joinRoomBtn.disabled = false;
+      setStatus(msg.reason || 'ホストに参加申請が拒否されました。', true);
+      startLobbyDiscovery();
+    }
+    return;
+  }
+
   if (msg.type === 'init') {
     if (!isHost) {
       if (!guestJoinPending) return;
       guestJoinPending = false;
+      isJoinRequestPending = false;
+      if (cancelJoinBtn) cancelJoinBtn.style.display = 'none';
       clearJoinTimers();
+      stopLobbyDiscovery();
       isConnected = true;
       enterReadyUI(currentRoomCode);
     }
@@ -3506,7 +4374,8 @@ function handleServerMessage(msg) {
 
     const me = latestPlayersSnapshot[myId];
     if (me) {
-      resetLocalPlayerForSpawn(me.x, me.y, me.z, me.hp, me.medkits, me.team);
+      const protectMs = me.spawnProtected ? (msg.spawnProtectMs ?? SPAWN_PROTECT_MS) : 0;
+      resetLocalPlayerForSpawn(me.x, me.y, me.z, me.hp, me.medkits, me.team, protectMs);
     }
     return;
   }
@@ -3546,7 +4415,7 @@ function handleServerMessage(msg) {
 
     const me = msg.players[myId];
     if (me) {
-      resetLocalPlayerForSpawn(me.x, me.y, me.z, me.hp, me.medkits, me.team);
+      resetLocalPlayerForSpawn(me.x, me.y, me.z, me.hp, me.medkits, me.team, msg.spawnProtectMs ?? SPAWN_PROTECT_MS);
     }
     showToast(`${getCurrentMap().name} / ${getCurrentRule().name} 開始！`);
     return;
@@ -3671,6 +4540,11 @@ function handleServerMessage(msg) {
     return;
   }
 
+  if (msg.type === 'spawnProtectedHit') {
+    spawnDamagePopup('無敵 (保護中)', 'immune');
+    return;
+  }
+
   if (msg.type === 'bodyImmune') {
     spawnDamagePopup('HS ONLY', 'immune');
     return;
@@ -3737,6 +4611,7 @@ function handleServerMessage(msg) {
     crosshair.style.opacity = '1';
     healChannelBox.style.display = 'block';
     updatePostureUI();
+    syncTouchButtonStates();
     SoundFX.healStart();
     return;
   }
@@ -3744,6 +4619,7 @@ function handleServerMessage(msg) {
   if (msg.type === 'healed') {
     playerState.isHealing = false;
     healChannelBox.style.display = 'none';
+    syncTouchButtonStates();
     if (typeof msg.medkits === 'number') {
       playerState.medkits = msg.medkits;
       updateMedkitUI();
@@ -3772,6 +4648,7 @@ function handleServerMessage(msg) {
     playerState.isCrouching = false;
     playerState.isAiming = false;
     playerState.isFiring = false;
+    playerState.spawnProtectEndTime = 0;
     playerState.killStreak = 0;
     playerState.multiKillCount = 0;
     cancelLocalReload();
@@ -3779,7 +4656,10 @@ function handleServerMessage(msg) {
     sniperScope.style.display = 'none';
     crosshair.style.opacity = '1';
     healChannelBox.style.display = 'none';
+    if (spawnProtectBox) spawnProtectBox.style.display = 'none';
+    if (spawnProtectVignette) spawnProtectVignette.style.display = 'none';
     updatePostureUI();
+    syncTouchButtonStates();
 
     const sec = msg.respawnTime || RESPAWN_SECONDS;
     playerState.respawnDuration = sec * 1000;
@@ -3794,7 +4674,15 @@ function handleServerMessage(msg) {
   }
 
   if (msg.type === 'respawn') {
-    resetLocalPlayerForSpawn(msg.x, msg.y, msg.z, msg.hp, msg.medkits ?? INITIAL_MEDKITS, msg.team);
+    resetLocalPlayerForSpawn(
+      msg.x,
+      msg.y,
+      msg.z,
+      msg.hp,
+      msg.medkits ?? INITIAL_MEDKITS,
+      msg.team,
+      msg.spawnProtectMs ?? SPAWN_PROTECT_MS
+    );
     return;
   }
 
@@ -3843,16 +4731,22 @@ function returnToLobby() {
   isOfflineSolo = false;
   matchOver = false;
   currentRoomCode = '';
+  playerState.spawnProtectEndTime = 0;
   deathScreen.style.display = 'none';
   victoryScreen.style.display = 'none';
   scoreboard.style.display = 'none';
   healChannelBox.style.display = 'none';
+  if (spawnProtectBox) spawnProtectBox.style.display = 'none';
+  if (spawnProtectVignette) spawnProtectVignette.style.display = 'none';
+  if (joinRequestPanel) joinRequestPanel.style.display = 'none';
+  if (cancelJoinBtn) cancelJoinBtn.style.display = 'none';
   lobbySection.style.display = 'block';
   readySection.style.display = 'none';
   startBotBtn.disabled = false;
   createRoomBtn.disabled = false;
   joinRoomBtn.disabled = false;
   setStatus('');
+  startLobbyDiscovery();
 }
 
 backToLobbyBtn.addEventListener('click', () => {
@@ -3884,6 +4778,7 @@ function connectHostWithFailover(brokerIndex) {
     createRoomBtn.disabled = false;
     joinRoomBtn.disabled = false;
     setStatus('中継サーバーに接続できませんでした。時間をおいて再度お試しください。', true);
+    startLobbyDiscovery();
     return;
   }
 
@@ -3941,6 +4836,7 @@ function connectHostWithFailover(brokerIndex) {
       }
       settled = true;
       clearTimeout(connectTimeout);
+      hostBrokerIndex = brokerIndex;
       isConnected = true;
       hostAddPlayer(myId, {
         name: nameInput.value.trim() || 'Host',
@@ -3949,6 +4845,9 @@ function connectHostWithFailover(brokerIndex) {
       });
       hostSyncBots(currentBotCount, currentBotDifficulty);
       enterReadyUI(code);
+      if (roomAnnounceTimer) clearInterval(roomAnnounceTimer);
+      roomAnnounceTimer = setInterval(publishRoomAnnounce, 3000);
+      publishRoomAnnounce();
       lastHostTickAt = Date.now();
       hostTickTimer = setInterval(hostTick, 66);
       hostTick();
@@ -3986,12 +4885,14 @@ function connectHostWithFailover(brokerIndex) {
       createRoomBtn.disabled = false;
       joinRoomBtn.disabled = false;
       setStatus('通信サーバーとの接続が切れました。ページを再読み込みしてルームを作成し直してください。', true);
+      startLobbyDiscovery();
     }
   });
 }
 
 startBotBtn.addEventListener('click', () => {
   ensureAudio();
+  stopLobbyDiscovery();
   cleanupNetwork(false);
   clearAllMatchEntities();
 
@@ -4034,8 +4935,13 @@ createRoomBtn.addEventListener('click', () => {
     setStatus('通信ライブラリの読み込みに失敗しました。ページを再読み込みしてください。', true);
     return;
   }
+  stopLobbyDiscovery();
   const selectedMap = mapSelect.value;
   const selectedRule = ruleSelect.value;
+  roomAccessMode =
+    roomAccessSelect && ['request', 'open', 'private'].includes(roomAccessSelect.value)
+      ? roomAccessSelect.value
+      : 'request';
   currentBotDifficulty = BOT_DIFFICULTIES[botDifficultySelect.value] ? botDifficultySelect.value : 'normal';
   const rawCount = Number.parseInt(botCountSelect.value, 10);
   currentBotCount = Number.isFinite(rawCount) ? Math.max(0, Math.min(7, rawCount)) : 0;
@@ -4056,18 +4962,19 @@ createRoomBtn.addEventListener('click', () => {
   connectHostWithFailover(0);
 });
 
-joinRoomBtn.addEventListener('click', () => {
+function joinRoomByCode(rawCode, asRequest = false) {
   ensureAudio();
   if (typeof mqtt === 'undefined') {
     setStatus('通信ライブラリの読み込みに失敗しました。ページを再読み込みしてください。', true);
     return;
   }
-  const code = roomCodeInput.value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const code = String(rawCode || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
   if (code.length !== 6) {
     setStatus('6桁のルームコードを入力してください。', true);
     return;
   }
 
+  stopLobbyDiscovery();
   const broker = getBrokerForRoomCode(code);
   const topics = makeRoomTopics(code);
   const guestId = 'g_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36);
@@ -4081,13 +4988,18 @@ joinRoomBtn.addEventListener('click', () => {
   isHost = false;
   isConnected = false;
   guestJoinPending = true;
+  isJoinRequestPending = Boolean(asRequest);
   lastSentMoveKey = '';
   lastHeartbeatSent = 0;
 
   startBotBtn.disabled = true;
   createRoomBtn.disabled = true;
   joinRoomBtn.disabled = true;
-  setStatus(`ルーム ${code} (${broker.name}) に接続中...`);
+  setStatus(
+    asRequest
+      ? `ルーム ${code} (${broker.name}) へ参加申請を送信中...`
+      : `ルーム ${code} (${broker.name}) に接続中...`
+  );
 
   const client = mqtt.connect(broker.url, {
     ...broker.opts,
@@ -4108,11 +5020,18 @@ joinRoomBtn.addEventListener('click', () => {
 
   joinTimeoutTimer = setTimeout(() => {
     if (guestJoinPending || !isConnected) {
+      const wasReq = isJoinRequestPending;
       cleanupNetwork(false);
       startBotBtn.disabled = false;
       createRoomBtn.disabled = false;
       joinRoomBtn.disabled = false;
-      setStatus('ルームが見つかりません。コードを確認してください。', true);
+      setStatus(
+        wasReq
+          ? '参加申請の応答がありませんでした。コードや公開状態を確認してください。'
+          : 'ルームが見つかりません。コードを確認してください。',
+        true
+      );
+      startLobbyDiscovery();
     }
   }, 10000);
 
@@ -4126,6 +5045,7 @@ joinRoomBtn.addEventListener('click', () => {
         createRoomBtn.disabled = false;
         joinRoomBtn.disabled = false;
         setStatus('ルームへの参加に失敗しました。もう一度お試しください。', true);
+        startLobbyDiscovery();
         return;
       }
 
@@ -4136,7 +5056,7 @@ joinRoomBtn.addEventListener('click', () => {
           JSON.stringify({
             senderId: guestId,
             msg: {
-              type: 'join',
+              type: asRequest ? 'joinRequest' : 'join',
               name: nameInput.value.trim() || `Player_${guestId.slice(-4)}`,
               avatarStyle: selectedAvatarStyle,
               avatarColor: selectedAvatarColor
@@ -4171,6 +5091,7 @@ joinRoomBtn.addEventListener('click', () => {
       createRoomBtn.disabled = false;
       joinRoomBtn.disabled = false;
       setStatus('接続エラーが発生しました。もう一度お試しください。', true);
+      startLobbyDiscovery();
     }
   });
 
@@ -4183,8 +5104,13 @@ joinRoomBtn.addEventListener('click', () => {
       createRoomBtn.disabled = false;
       joinRoomBtn.disabled = false;
       setStatus('通信サーバーとの接続が切れました。ページを再読み込みしてください。', true);
+      startLobbyDiscovery();
     }
   });
+}
+
+joinRoomBtn.addEventListener('click', () => {
+  joinRoomByCode(roomCodeInput.value, false);
 });
 
 applyMapBtn.addEventListener('click', () => {
@@ -4194,9 +5120,39 @@ applyMapBtn.addEventListener('click', () => {
   const nextBotDiff = ingameBotDifficulty.value;
   const nextBotCount = ingameBotCount.value;
   hostResetMatch(nextMap, nextRule, nextBotCount, nextBotDiff);
+  publishRoomAnnounce();
   const diffLabel = (BOT_DIFFICULTIES[currentBotDifficulty] || BOT_DIFFICULTIES.normal).name;
   setStatus(`「${MAPS[nextMap].name} / ${RULES[nextRule].name} / ${diffLabel} ${currentBotCount}体」を適用しました。`);
 });
+
+if (refreshRoomsBtn) {
+  refreshRoomsBtn.addEventListener('click', () => {
+    discoveredRooms.clear();
+    startLobbyDiscovery();
+  });
+}
+
+if (cancelJoinBtn) {
+  cancelJoinBtn.addEventListener('click', () => {
+    if (mqttClient && mqttClient.connected && roomTopics && myId) {
+      try {
+        mqttClient.publish(
+          roomTopics.toHost,
+          JSON.stringify({ senderId: myId, msg: { type: 'cancelJoinRequest' } }),
+          { qos: 0 }
+        );
+      } catch (_) {}
+    }
+    cleanupNetwork(false);
+    startBotBtn.disabled = false;
+    createRoomBtn.disabled = false;
+    joinRoomBtn.disabled = false;
+    setStatus('参加申請をキャンセルしました。');
+    startLobbyDiscovery();
+  });
+}
+
+startLobbyDiscovery();
 
 copyInviteBtn.addEventListener('click', async () => {
   const inviteUrl = new URL(window.location.href);
@@ -4401,6 +5357,21 @@ window.addEventListener('contextmenu', (e) => e.preventDefault());
 window.addEventListener('keydown', (e) => {
   keys[e.code] = true;
 
+  const activeTag = document.activeElement?.tagName;
+  const isTypingField = activeTag === 'INPUT' || activeTag === 'SELECT' || activeTag === 'TEXTAREA';
+  if (!isTypingField && !e.repeat && isHost && pendingJoinRequests.size > 0) {
+    if (e.code === 'KeyY') {
+      e.preventDefault();
+      approveJoinRequest();
+      return;
+    }
+    if (e.code === 'KeyN') {
+      e.preventDefault();
+      rejectJoinRequest();
+      return;
+    }
+  }
+
   if (e.code === 'Tab' && isConnected) {
     e.preventDefault();
     scoreboard.style.display = 'block';
@@ -4430,6 +5401,9 @@ window.addEventListener('keydown', (e) => {
     else if (e.code === 'Digit2') switchWeapon('smg');
     else if (e.code === 'Digit3') switchWeapon('shotgun');
     else if (e.code === 'Digit4') switchWeapon('sniper');
+    else if (e.code === 'Digit5') switchWeapon('dmr');
+    else if (e.code === 'Digit6') switchWeapon('lmg');
+    else if (e.code === 'Digit7') switchWeapon('revolver');
   }
 });
 
@@ -4646,6 +5620,12 @@ bindTouchTapAction(btnTouchCrouch, () => {
     updatePostureUI();
   }
 });
+if (btnApproveReq) {
+  bindTouchTapAction(btnApproveReq, () => approveJoinRequest());
+}
+if (btnRejectReq) {
+  bindTouchTapAction(btnRejectReq, () => rejectJoinRequest());
+}
 bindTouchTapAction(btnTouchSlide, () => {
   tryStartSlide();
 });
@@ -4754,26 +5734,50 @@ function startReload() {
   }, playerState.reloadDuration);
 }
 
+const sharedShellGeo = new THREE.BoxGeometry(0.018, 0.018, 0.048);
+const sharedShellMatBrass = new THREE.MeshLambertMaterial({ color: 0xfbbf24 });
+const sharedShellMatRed = new THREE.MeshLambertMaterial({ color: 0xdc2626 });
+const sharedParticleGeo = new THREE.BoxGeometry(0.08, 0.08, 0.08);
+const sharedParticleMatGold = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
+const sharedParticleMatRed = new THREE.MeshBasicMaterial({ color: 0xef4444 });
+const sharedParticleMatSlate = new THREE.MeshBasicMaterial({ color: 0x94a3b8 });
+const sharedHoleGeo = new THREE.PlaneGeometry(0.14, 0.14);
+const sharedHoleMat = new THREE.MeshBasicMaterial({
+  color: 0x090d16,
+  transparent: true,
+  opacity: 0.82,
+  polygonOffset: true,
+  polygonOffsetFactor: -2
+});
+
+const _shootOrigin = new THREE.Vector3();
+const _shootFwd = new THREE.Vector3();
+const _shootRight = new THREE.Vector3();
+const _shootUp = new THREE.Vector3();
+const _shootDir = new THREE.Vector3();
+const _fxRight = new THREE.Vector3();
+const _fxUp = new THREE.Vector3();
+const _fxOrigin = new THREE.Vector3();
+const _fxNormal = new THREE.Vector3();
+let lastProtectNoticeAt = 0;
+
 function ejectShellCasing(weaponId) {
-  if (shellCasings.length >= 16) {
+  const maxShells = graphicsQuality === 'low' ? 6 : 16;
+  while (shellCasings.length >= maxShells) {
     const oldest = shellCasings.shift();
     scene.remove(oldest.mesh);
-    oldest.mesh.geometry.dispose();
-    oldest.mesh.material.dispose();
   }
-  const color = weaponId === 'shotgun' ? 0xdc2626 : 0xfbbf24;
-  const mesh = new THREE.Mesh(
-    new THREE.BoxGeometry(0.018, 0.018, 0.048),
-    new THREE.MeshStandardMaterial({ color, roughness: 0.3, metalness: 0.8 })
-  );
-  const startPos = new THREE.Vector3(0.22, -0.14, -0.35).applyMatrix4(camera.matrixWorld);
-  mesh.position.copy(startPos);
+  const mat = weaponId === 'shotgun' ? sharedShellMatRed : sharedShellMatBrass;
+  const mesh = new THREE.Mesh(sharedShellGeo, mat);
+  mesh.userData.sharedAsset = true;
+  _fxOrigin.set(0.22, -0.14, -0.35).applyMatrix4(camera.matrixWorld);
+  mesh.position.copy(_fxOrigin);
 
-  const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
-  const up = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
+  _fxRight.set(1, 0, 0).applyQuaternion(camera.quaternion);
+  _fxUp.set(0, 1, 0).applyQuaternion(camera.quaternion);
   const vel = new THREE.Vector3()
-    .addScaledVector(right, 2.2 + Math.random() * 1.2)
-    .addScaledVector(up, 1.8 + Math.random() * 0.8);
+    .addScaledVector(_fxRight, 2.2 + Math.random() * 1.2)
+    .addScaledVector(_fxUp, 1.8 + Math.random() * 0.8);
 
   scene.add(mesh);
   shellCasings.push({ mesh, vel, life: 0.65 });
@@ -4782,6 +5786,13 @@ function ejectShellCasing(weaponId) {
 function shoot() {
   const weapon = getActiveWeapon();
   const now = performance.now();
+  if (isLocalSpawnProtected(now)) {
+    if (now - lastProtectNoticeAt > 1200) {
+      lastProtectNoticeAt = now;
+      showToast('スポーン保護中は攻撃できません');
+    }
+    return;
+  }
   if (playerState.isReloading || playerState.isHealing || matchOver || now - playerState.lastShotTime < weapon.fireRateMs) return;
 
   const ammo = playerState.weaponAmmo[weapon.id] ?? 0;
@@ -4803,12 +5814,10 @@ function shoot() {
   SoundFX.shot(weapon.id);
   ejectShellCasing(weapon.id);
 
-  const origin = new THREE.Vector3();
-  camera.getWorldPosition(origin);
-  const forward = new THREE.Vector3();
-  camera.getWorldDirection(forward);
-  const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
-  const up = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
+  camera.getWorldPosition(_shootOrigin);
+  camera.getWorldDirection(_shootFwd);
+  _shootRight.set(1, 0, 0).applyQuaternion(camera.quaternion);
+  _shootUp.set(0, 1, 0).applyQuaternion(camera.quaternion);
 
   // 腰撃ち・移動・空中・スライディング・連射ブルームを統合した円形拡散
   const spread = computeCurrentSpread(weapon);
@@ -4820,17 +5829,18 @@ function shoot() {
     const radius = Math.sqrt(Math.random()) * spread;
     const sx = Math.cos(angle) * radius;
     const sy = Math.sin(angle) * radius;
-    const pelletDir = forward.clone()
-      .addScaledVector(right, sx)
-      .addScaledVector(up, sy)
+    _shootDir
+      .copy(_shootFwd)
+      .addScaledVector(_shootRight, sx)
+      .addScaledVector(_shootUp, sy)
       .normalize();
-    rays.push({ x: pelletDir.x, y: pelletDir.y, z: pelletDir.z });
+    rays.push({ x: _shootDir.x, y: _shootDir.y, z: _shootDir.z });
   }
 
   sendToHost({
     type: 'shoot',
     weaponId: weapon.id,
-    origin: { x: origin.x, y: origin.y, z: origin.z },
+    origin: { x: _shootOrigin.x, y: _shootOrigin.y, z: _shootOrigin.z },
     rays
   });
 }
@@ -4852,13 +5862,16 @@ function spawnTracer(start, end, isHit, color = 0xfacc15) {
 }
 
 function spawnImpactParticles(pos, isHit, isHeadshot) {
-  const count = isHit ? 7 : 4;
-  const color = isHeadshot ? 0xfacc15 : isHit ? 0xef4444 : 0x94a3b8;
+  const maxParticles = graphicsQuality === 'low' ? 36 : 90;
+  while (impactParticles.length >= maxParticles) {
+    const oldest = impactParticles.shift();
+    scene.remove(oldest.mesh);
+  }
+  const count = graphicsQuality === 'low' ? (isHit ? 4 : 2) : (isHit ? 7 : 4);
+  const mat = isHeadshot ? sharedParticleMatGold : isHit ? sharedParticleMatRed : sharedParticleMatSlate;
   for (let i = 0; i < count; i++) {
-    const mesh = new THREE.Mesh(
-      new THREE.BoxGeometry(0.08, 0.08, 0.08),
-      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 1 })
-    );
+    const mesh = new THREE.Mesh(sharedParticleGeo, mat);
+    mesh.userData.sharedAsset = true;
     mesh.position.set(pos.x, pos.y, pos.z);
     scene.add(mesh);
     impactParticles.push({
@@ -4875,11 +5888,11 @@ function spawnImpactParticles(pos, isHit, isHeadshot) {
 
 function spawnBulletHole(end, rayDir) {
   const map = getCurrentMap();
-  const normal = new THREE.Vector3(-rayDir.x, -rayDir.y, -rayDir.z).normalize();
+  _fxNormal.set(-rayDir.x, -rayDir.y, -rayDir.z).normalize();
 
   // 床や障害物AABBの最寄り面法線を求めて平らに貼る
   if (Math.abs(end.y) < 0.03) {
-    normal.set(0, 1, 0);
+    _fxNormal.set(0, 1, 0);
   } else {
     for (const obs of map.obstacles) {
       const dx = Math.abs(Math.abs(end.x - obs.x) - obs.w / 2);
@@ -4887,37 +5900,28 @@ function spawnBulletHole(end, rayDir) {
       const dz = Math.abs(Math.abs(end.z - obs.z) - obs.d / 2);
       const minD = Math.min(dx, dy, dz);
       if (minD < 0.05) {
-        if (minD === dx) normal.set(Math.sign(end.x - obs.x) || 1, 0, 0);
-        else if (minD === dy) normal.set(0, Math.sign(end.y - obs.y) || 1, 0);
-        else normal.set(0, 0, Math.sign(end.z - obs.z) || 1);
+        if (minD === dx) _fxNormal.set(Math.sign(end.x - obs.x) || 1, 0, 0);
+        else if (minD === dy) _fxNormal.set(0, Math.sign(end.y - obs.y) || 1, 0);
+        else _fxNormal.set(0, 0, Math.sign(end.z - obs.z) || 1);
         break;
       }
     }
   }
 
-  if (bulletHoles.length >= 36) {
+  const maxHoles = graphicsQuality === 'low' ? 14 : 36;
+  while (bulletHoles.length >= maxHoles) {
     const old = bulletHoles.shift();
     mapGroup.remove(old);
-    old.geometry.dispose();
-    old.material.dispose();
   }
 
-  const hole = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.14, 0.14),
-    new THREE.MeshBasicMaterial({
-      color: 0x090d16,
-      transparent: true,
-      opacity: 0.82,
-      polygonOffset: true,
-      polygonOffsetFactor: -2
-    })
-  );
+  const hole = new THREE.Mesh(sharedHoleGeo, sharedHoleMat);
+  hole.userData.sharedAsset = true;
   hole.position.set(
-    end.x + normal.x * 0.012,
-    end.y + normal.y * 0.012,
-    end.z + normal.z * 0.012
+    end.x + _fxNormal.x * 0.012,
+    end.y + _fxNormal.y * 0.012,
+    end.z + _fxNormal.z * 0.012
   );
-  hole.lookAt(hole.position.x + normal.x, hole.position.y + normal.y, hole.position.z + normal.z);
+  hole.lookAt(hole.position.x + _fxNormal.x, hole.position.y + _fxNormal.y, hole.position.z + _fxNormal.z);
   mapGroup.add(hole);
   bulletHoles.push(hole);
 }
@@ -4965,6 +5969,10 @@ function getGroundHeight(x, y, z) {
 // ==========================================
 let lastTime = performance.now();
 let lastNetSend = 0;
+let lastMinimapDraw = 0;
+const _moveStep = new THREE.Vector3();
+const _moveFwd = new THREE.Vector3();
+const _moveRight = new THREE.Vector3();
 
 function animate(now) {
   requestAnimationFrame(animate);
@@ -5057,12 +6065,29 @@ function animate(now) {
 
   if (isConnected && playerState.alive) {
     const weapon = getActiveWeapon();
+    const spawnProtected = isLocalSpawnProtected(now);
+
+    if (spawnProtectBox && spawnProtectVignette) {
+      if (spawnProtected) {
+        const remainMs = Math.max(0, playerState.spawnProtectEndTime - now);
+        const pct = (remainMs / SPAWN_PROTECT_MS) * 100;
+        spawnProtectBox.style.display = 'block';
+        spawnProtectVignette.style.display = 'block';
+        if (spawnProtectTimerEl) spawnProtectTimerEl.textContent = `${(remainMs / 1000).toFixed(1)}s`;
+        if (spawnProtectFillEl) spawnProtectFillEl.style.width = `${pct}%`;
+      } else if (playerState.spawnProtectEndTime > 0) {
+        playerState.spawnProtectEndTime = 0;
+        spawnProtectBox.style.display = 'none';
+        spawnProtectVignette.style.display = 'none';
+        syncTouchButtonStates();
+      }
+    }
 
     // 射撃拡散ブルームの自然減衰
     playerState.fireBloom = Math.max(0, playerState.fireBloom - dt * 0.14);
 
     // フルオート射撃
-    if (playerState.isFiring && weapon.auto && isControlActive() && !playerState.isHealing && !matchOver) {
+    if (playerState.isFiring && weapon.auto && isControlActive() && !playerState.isHealing && !spawnProtected && !matchOver) {
       shoot();
     }
 
@@ -5115,47 +6140,51 @@ function animate(now) {
       slideCard.classList.add('ready');
     }
 
-    // 移動ベクトルの決定
-    const moveStep = new THREE.Vector3();
+    // 移動ベクトルの決定（回復中もしゃがみ相当の低速で移動可）
+    _moveStep.set(0, 0, 0);
     const effectiveHeight = playerState.isSliding
       ? SLIDE_PLAYER_HEIGHT
       : playerState.isCrouching
         ? CROUCH_PLAYER_HEIGHT
         : PLAYER_HEIGHT;
 
-    if (!playerState.isHealing && !matchOver) {
-      if (playerState.isSliding) {
+    if (!matchOver) {
+      if (!playerState.isHealing && playerState.isSliding) {
         const t = 1 - playerState.slideTimer / SLIDE_DURATION;
         const speed = THREE.MathUtils.lerp(SLIDE_INITIAL_SPEED, SLIDE_END_SPEED, t);
-        moveStep.copy(playerState.slideDir).multiplyScalar(speed * dt);
+        _moveStep.copy(playerState.slideDir).multiplyScalar(speed * dt);
       } else if (isControlActive()) {
-        const forward = new THREE.Vector3(-Math.sin(playerState.yaw), 0, -Math.cos(playerState.yaw));
-        const right = new THREE.Vector3(Math.cos(playerState.yaw), 0, -Math.sin(playerState.yaw));
-        if (keys['KeyW']) moveStep.add(forward);
-        if (keys['KeyS']) moveStep.sub(forward);
-        if (keys['KeyD']) moveStep.add(right);
-        if (keys['KeyA']) moveStep.sub(right);
-        if (touchMoveY !== 0) moveStep.addScaledVector(forward, -touchMoveY);
-        if (touchMoveX !== 0) moveStep.addScaledVector(right, touchMoveX);
-        if (moveStep.lengthSq() > 0) {
-          const throttle = Math.min(1, moveStep.length());
-          const crouchMult = playerState.isCrouching ? CROUCH_MOVE_MULT : 1.0;
+        _moveFwd.set(-Math.sin(playerState.yaw), 0, -Math.cos(playerState.yaw));
+        _moveRight.set(Math.cos(playerState.yaw), 0, -Math.sin(playerState.yaw));
+        if (keys['KeyW']) _moveStep.add(_moveFwd);
+        if (keys['KeyS']) _moveStep.sub(_moveFwd);
+        if (keys['KeyD']) _moveStep.add(_moveRight);
+        if (keys['KeyA']) _moveStep.sub(_moveRight);
+        if (touchMoveY !== 0) _moveStep.addScaledVector(_moveFwd, -touchMoveY);
+        if (touchMoveX !== 0) _moveStep.addScaledVector(_moveRight, touchMoveX);
+        if (_moveStep.lengthSq() > 0) {
+          const throttle = Math.min(1, _moveStep.length());
+          const postureMult = playerState.isHealing
+            ? CROUCH_MOVE_MULT
+            : playerState.isCrouching
+              ? CROUCH_MOVE_MULT
+              : 1.0;
           const speedMult =
             weapon.moveMult *
-            crouchMult *
+            postureMult *
             THREE.MathUtils.lerp(1, weapon.adsMoveMult, playerState.adsBlend);
-          moveStep.normalize().multiplyScalar(MOVE_SPEED * speedMult * throttle * dt);
+          _moveStep.normalize().multiplyScalar(MOVE_SPEED * speedMult * throttle * dt);
         }
       }
 
       const prevX = playerState.pos.x;
       const prevZ = playerState.pos.z;
-      if (moveStep.lengthSq() > 0) {
-        const nextX = playerState.pos.x + moveStep.x;
+      if (_moveStep.lengthSq() > 0) {
+        const nextX = playerState.pos.x + _moveStep.x;
         if (!checkHorizontalCollision(nextX, playerState.pos.y, playerState.pos.z, effectiveHeight)) {
           playerState.pos.x = nextX;
         }
-        const nextZ = playerState.pos.z + moveStep.z;
+        const nextZ = playerState.pos.z + _moveStep.z;
         if (!checkHorizontalCollision(playerState.pos.x, playerState.pos.y, nextZ, effectiveHeight)) {
           playerState.pos.z = nextZ;
         }
@@ -5164,7 +6193,7 @@ function animate(now) {
       const targetMoveRatio = dt > 0 ? Math.min(1.8, actualMoved / (MOVE_SPEED * dt)) : 0;
       playerState.moveRatio = THREE.MathUtils.lerp(playerState.moveRatio, targetMoveRatio, Math.min(1, dt * 16));
 
-      if (isControlActive() && keys['Space'] && playerState.onGround) {
+      if (!playerState.isHealing && isControlActive() && keys['Space'] && playerState.onGround) {
         tryJump();
       }
     } else {
@@ -5230,10 +6259,10 @@ function animate(now) {
     playerState.swayX = THREE.MathUtils.lerp(playerState.swayX, 0, Math.min(1, dt * 10));
     playerState.swayY = THREE.MathUtils.lerp(playerState.swayY, 0, Math.min(1, dt * 10));
 
-    // 一人称武器の位置（腰だめ <-> ADS中央 <-> 回復中）
+    // 一人称武器の位置（腰だめ <-> ADS中央 <-> 回復中・保護中）
     const targetGunX = THREE.MathUtils.lerp(0.28, 0.0, playerState.adsBlend) + bobX + playerState.swayX;
-    const targetGunY = (playerState.isHealing
-      ? -0.45
+    const targetGunY = (playerState.isHealing || spawnProtected
+      ? -0.34
       : THREE.MathUtils.lerp(-0.24, -0.155, playerState.adsBlend)) - bobY + playerState.swayY;
     const targetGunZ = THREE.MathUtils.lerp(-0.45, -0.34, playerState.adsBlend);
 
@@ -5269,8 +6298,11 @@ function animate(now) {
       damageIndicator.style.opacity = '0';
     }
 
-    // ミニマップ更新
-    drawMinimap();
+    // ミニマップ更新（15Hzに間引いてCPU負荷軽減）
+    if (now - lastMinimapDraw >= 66) {
+      lastMinimapDraw = now;
+      drawMinimap();
+    }
 
     // サーバーへ自分の状態を送信（最大15Hz・変化時のみ＋2秒ごとにキープアライブ）
     if (now - lastNetSend > 66) {
@@ -5320,7 +6352,10 @@ function animate(now) {
       camera.fov = BASE_FOV;
       camera.updateProjectionMatrix();
     }
-    drawMinimap();
+    if (now - lastMinimapDraw >= 66) {
+      lastMinimapDraw = now;
+      drawMinimap();
+    }
   } else if (!isConnected) {
     const t = now * 0.0002;
     camera.position.set(Math.cos(t) * 17, 7, Math.sin(t) * 17);
@@ -5373,6 +6408,9 @@ function animate(now) {
     if (op.healAura.visible) {
       op.healAura.rotation.z += dt * 3.5;
     }
+    if (op.shieldMesh && op.shieldMesh.visible) {
+      op.shieldMesh.rotation.y += dt * 1.4;
+    }
   }
 
   // 弾道エフェクト更新
@@ -5394,11 +6432,9 @@ function animate(now) {
     pt.life -= dt;
     pt.vel.y -= 15 * dt;
     pt.mesh.position.addScaledVector(pt.vel, dt);
-    pt.mesh.material.opacity = Math.max(0, pt.life / 0.32);
+    pt.mesh.scale.setScalar(Math.max(0.05, pt.life / 0.32));
     if (pt.life <= 0) {
       scene.remove(pt.mesh);
-      pt.mesh.geometry.dispose();
-      pt.mesh.material.dispose();
       impactParticles.splice(i, 1);
     }
   }
@@ -5413,8 +6449,6 @@ function animate(now) {
     sc.mesh.rotation.z += dt * 12;
     if (sc.life <= 0) {
       scene.remove(sc.mesh);
-      sc.mesh.geometry.dispose();
-      sc.mesh.material.dispose();
       shellCasings.splice(i, 1);
     }
   }
